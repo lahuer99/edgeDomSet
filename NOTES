@@ -16,4 +16,10 @@
  due to a technique which can deal with remaining graphs with max.degree 3
  also showed that EDS has a kernel with 2k^2 + 2k vertices and O(k^3) edges
 
-4 ~ Hagerup [] through refinement of kernelization algo.[3] and a bit different analysis got a smaller kernel of max((1/2k^2 + 7/2k),6k) for the problem
+4 ~ Hagerup [Kernels for Edge dominating set:Simpler or smaller] through refinement of kernelization algo.[3] and a bit different analysis got a smaller kernel of max((1/2k^2 + 7/2k),6k) for the problem
+
+5 ~ [An Improved algo. for Parameterized EDS problem] improved solution of 
+ O*(2.2351^k)
+
+6 ~ [Parameterized edge dominating set in graphs with degree bounded by 3] gave  O*(2.1479^k) 
+ for cubic graphs by enumerating on vertex covers.
