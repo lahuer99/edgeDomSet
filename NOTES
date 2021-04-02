@@ -1,0 +1,19 @@
+- if E' is an edge cover, then V(E') is a vertex cover of G
+- if |E'|<=k , then there exists a vertex cover of G with size no more than 2k
+=> enumerating all vertex covers is reasonable in the algo for EDS and Partial Vertex Cover is introduced
+
+1 ~ Fernau et al.[Effecient enumeration based exact algo.]
+ let C be a vertex subset of some vertex cover; 
+ if any vertex of G\C is with degree no more than 1, then finding edgeDomSet of G is polynomial.
+ thus it is reasonable for the algo. to branch on vertices in G\C with degree no less than 2.
+ O*(2.6181^k) time FPT for EDS
+
+2 ~ Formin et al.[On 2 techniques of combining branching and treewidth] gave a similar algo., but picked up vertices with degree larger than 2 to branch.And then used path-decomposition to handle the rest vertices in G\C
+ O*(2.4181^k) time FPT algo. for EDS
+
+3 ~ Xiao et al.[New parameterized algo. for the EDS problem] gave a 
+ O*(2.3147^k) time algo.
+ due to a technique which can deal with remaining graphs with max.degree 3
+ also showed that EDS has a kernel with 2k^2 + 2k vertices and O(k^3) edges
+
+4 ~ Hagerup [] through refinement of kernelization algo.[3] and a bit different analysis got a smaller kernel of max((1/2k^2 + 7/2k),6k) for the problem
