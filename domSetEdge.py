@@ -82,19 +82,90 @@ for k in toremove:
 
 tails=list(nbrs.keys())
 # tails is the set of tails in U2G
-# now have to branch on them
+# now have to branch on them,ie , either incl vertices in tails or not incl them
 # print(tails)
 
 
-
-# def tailIdentifier():
-
-
+# set of vertex covers V obtained after branching
+VCs=[]
 
 
+def tailBrancher(v):
+	# incl vat(ie, vertex w deg>1)
+	V1=[]
+	if(U2G.degree(nbrs[v][0])==1):
+		vat=nbrs[v][1]
+	else:
+		vat=nbrs[v][0]
+	V1.append(vat)
+	VCs.append(V1)
 
-# create graph of U2
+	# not incl v,ie ,incl v in I and incl nbrs[v] in VC
+	V2=[]
+	V2.extend(list(nx.all_neighbors(U2G,vat))) 
+	VCs.append(V2)
 
+# we have a list VCs, of all possible vertex cover we get from branching on diff tails
+
+
+
+for v in tails:
+	tailBrancher(v)
+
+
+# NEED TO TAKE ONLY ANY ONE TO CHECK FOR YES/NO INSTANCE
+# can take first set
+
+
+# also have to modify new U2G s for each stage
+# MAKE THIS A FUNCTION !!
+
+# incl 7
+VC1=VCs[0]
+
+# U2_clone=U2G
+U2G1=nx.Graph()
+# func start
+for v in U2G.nodes:
+	if v not in VC1:
+		U2G1.add_node(v)
+
+U2G1_vertices=list(U2G1.nodes)
+
+for (u,v) in edges:
+	if u in U2G1_vertices and v in U2G1_vertices:
+		U2G1.add_edge(u,v)
+
+U2G1_edges=list(U2G1.edges)
+# func end
+
+
+
+# excl 7
+VC2=VCs[1]
+U2G2=nx.Graph()
+# func start
+for v in U2G.nodes:
+	if v not in VC2:
+		U2G2.add_node(v)
+
+U2G2_vertices=list(U2G2.nodes)
+
+for (u,v) in edges:
+	if u in U2G2_vertices and v in U2G2_vertices:
+		U2G2.add_edge(u,v)
+
+U2G2_edges=list(U2G2.edges)
+# func end
+
+print(U1)
+
+# print(edges)
+
+# print(U2G1.edges)
+# print(U2G2.edges)
+
+# print(list(nx.find_cliques(U2G1)))
 
 
 # tail detection and dealing
