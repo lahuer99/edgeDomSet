@@ -5,7 +5,7 @@ import networkx as nx
 G=nx.Graph()
 
 #parameter[if there is a k-eds?] 
-k=4
+k=3
 
 # max size possible for vc [p<0 => NO instance]
 p=2*k
@@ -53,7 +53,7 @@ def cliqueRemover(Gr,pr):
 	for cl in nx.find_cliques(Gr):
 		print(cl)
 		if(tuple(cl) not in edges and tuple(cl)[::-1] not in edges):
-			U1.append(cl)
+			U1.extend(cl)
 			pr=pr-len(cl)+1
 			for el in cl:
 				if el in U2:
@@ -188,7 +188,10 @@ print(p2)
 print(U2G2.edges)
 print(VC2)
 
-
+if(p1>0 or p2>0):
+	print("YES")
+else:
+	print("NO")
 
 
 
