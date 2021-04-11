@@ -1,6 +1,6 @@
 # networkx is a Python language software package for the creation, manipulation, and study of the structure, dynamics, and function of complex networks(like graphs!).
 import networkx as nx
-
+from networkx.algorithms.approximation import dominating_set
 # input graph in question
 G=nx.Graph()
 
@@ -37,7 +37,16 @@ vertices=list(G.nodes)
 # store edges of graph in a list
 edges=list(G.edges)
 
-# init set of deciders
+# print(dominating_set.min_edge_dominating_set(G))
+# maximal matching is present in networkx(so enumeration is no issue)
+# or use subgraph induced in networkx
+# all we need to do is follow algo. and get minimal vc
+
+# maximal matching from min.vc obtained and add edge for unmatched vertices
+
+# class Deciders:
+# 	# init set of deciders
+# 	def __init__(self,)
 U1=C=I=[]
 U2=vertices
 
@@ -51,7 +60,7 @@ U2=vertices
 # getting all cliques of the graph
 def cliqueRemover(Gr,pr):
 	for cl in nx.find_cliques(Gr):
-		print(cl)
+		# print(cl)
 		if(tuple(cl) not in edges and tuple(cl)[::-1] not in edges):
 			U1.extend(cl)
 			pr=pr-len(cl)+1
@@ -60,7 +69,7 @@ def cliqueRemover(Gr,pr):
 					U2.remove(el)
 				# else:
 					# print(el)
-	print("------------------")	
+	# print("------------------")	
 	return pr
 
 
@@ -192,6 +201,9 @@ if(p1>0 or p2>0):
 	print("YES")
 else:
 	print("NO")
+
+# SG=G.subgraph([0,6,2,4])
+# print(list(SG.edges))
 
 
 
