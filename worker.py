@@ -51,8 +51,9 @@ ve=sorted(G.degree,key=lambda x:x[1],reverse=True)[0][0]
 def recc(gr,C1,U1,U2,p1):
 	if p1>=0 and len(U2)!=0:
 		cliqueChecker(gr,C1,U1,U2,p1)
-		print(C1)
-		print(p1)
+		# print(C1)
+		# print(p1)
+		fourCycles(gr,C1,U1,U2,p1)
 		tailIdentifier(gr,C1,U1,U2,p1)
 		# tailBrancher() has been called in above func
 		# recc()
@@ -60,6 +61,7 @@ def recc(gr,C1,U1,U2,p1):
 		print(p1)
 		print("--------------")
 	else:
+		print(C1)
 		print("YES")
 	# if p1<0:
 	# 	return false
@@ -75,7 +77,7 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 		n=len(list(h.nodes))
 		if h.size()==n*(n-1)/2:
 			# we have a clique component; move it to U1 and create new state and recc
-			print("Yes")
+			# print("Yes")
 			newgr=gr.copy()
 			U11=list(U1)
 			U22=list(U2)
@@ -84,6 +86,22 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 			newgr.remove_nodes_from(list(h.nodes))
 			recc(newgr,C1,U11,U22,p1-n+1)
 
+
+# now checking for 4-cycles
+def fourCycles(gr,C1,U1,U2,p1):
+	for l in list(nx.cycle_basis(gr)):
+		if len(l)==4:
+			# we have a 4cycle; we have to branch with ab,cd or bc,ad
+			s=gr.subgraph(l)
+			newgr=gr.copy()
+			C11=list(C1)
+			U11=list(U1)
+			newgr.remove_nodes_from(l)
+			C11.extend([s.edges[0],s.edges[2]])
+			U22=list(U2)
+			U22=[x for x in U2 if x in list(s.nodes)]
+			recc(newgr,C11,U11,U22,p1-2)
+			# now have to add the other edge set
 
 
 
@@ -155,83 +173,3 @@ recc(U21,C1,U1,U2,p1)
 
 
 
-
-# C1=list(C)
-# C2=list(C)
-# p1=p
-# p2=p
-# C1.append(v)
-# p1=p1-1
-# C2.extend(list(G.neighbors(v)))
-# p2=p2-len(C2)
-
-# now have to get modified U2 corresponding to both C1 and C2
-# U21=G.copy()
-# # .subgraph(list(U2))
-# U22=G.copy()
-# # .subgraph(list(U2))
-
-# U21.remove_nodes_from(C1)
-# U22.remove_nodes_from(C2)
-
-# print(U21.edges)
-# print(U22.edges)
-# print(p1)
-# print(p2)
-
-# we have to check for new clique components each time a graph is modified
-# check if it is component-ed and if so, check if any of them is a clique(that will be called a clique component!?)
-
-
-
-# check for tails
-# tails_U21=tails_U22={}
-# def tailIdentifier(gr,nbrs):
-# 	# tail identifier
-# 	# get deg2 nodes
-# 	for v in list(gr.nodes):
-# 		if gr.degree(v)==2:
-# 			nbrs[v]=list(nx.all_neighbors(gr,v))
-
-# 	toremove=[]
-# 	for (k,v) in nbrs.items():
-# 		if not (gr.degree(v[0])==1 or gr.degree(v[1])==1):
-# 			toremove.append(k)
-
-# 	for k in toremove:
-# 		del nbrs[k]
-# 	return list(nbrs.keys())
-# nbrs_U21={}
-# tails_U21=tailIdentifier(U21,nbrs_U21)
-# nbrs_U22={}
-# tails_U22=tailIdentifier(U22,nbrs_U22)
-
-# VCs=[]
-# # got tails in both graphs,now have to branch on them
-# def tailBrancher(gr,nbrs,v):
-# 	# incl vat(ie, vertex w deg>1)
-# 	V1=[]
-# 	if(gr.degree(nbrs[v][0])==1):
-# 		vat=nbrs[v][1]
-# 	else:
-# 		vat=nbrs[v][0]
-# 	V1.append(vat)
-# 	VCs.append(V1)
-
-# 	# not incl v,ie ,incl v in I and incl nbrs[v] in VC
-# 	V2=[]
-# 	V2.extend(list(nx.all_neighbors(gr,vat))) 
-# 	VCs.append(V2)
-
-# newU21s=[]
-# for ve in tails_U21:
-# 	print(ve)
-# 	tailBrancher(U21,nbrs_U21,ve)
-
-# print(C1)
-# print(p1)
-# print(VCs)
-# until no 2-path component exists
-
-
-# print(G.edges(v))
