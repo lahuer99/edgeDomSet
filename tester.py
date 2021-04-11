@@ -41,4 +41,5 @@ C=I=U1=[]
 U2=vertices
 
 # check for 4 cycles
-print(list(nx.cycle_basis(G)))
+# print(list(nx.cycle_basis(G)))
+print(G.edges(0))

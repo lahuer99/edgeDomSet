@@ -63,10 +63,36 @@ def recc(gr,C1,U1,U2,p1):
 	else:
 		print(C1)
 		print(U1)
+		# print(U2)
+		enumerator(gr,C1,U1)
 		print("YES")
 	# if p1<0:
 	# 	return false
 	# else check for 2-path thing
+
+def enumerator(GG,CC,UU):
+	eds=[]
+	s=G.subgraph(CC)
+	for l in UU:
+		sd=G.subgraph(l)
+		if len(list(sd.edges))!=0:
+			eds.append(list(sd.edges)[0])
+		else:
+			un_v=l[0]
+			nei_set=set(list(nx.all_neighbors(G,un_v)))
+			sd.edges()
+			c_set=[x for x in list(s.nodes) if len(s.edges(x))==0]
+			if len(nei_set.intersection(c_set))>0:
+				eds.append((un_v,list(nei_set.intersection(c_set))[0]))
+			else:
+				eds.append((un_v,list(nx.all_neighbors(G,un_v))[0]))
+	eds.extend(list(s.edges))
+	for ve in CC:
+		if len([item for item in eds if item[0]==ve or item[1]==ve])==0:
+			eds.append((ve,list(nx.all_neighbors(G,ve))[0]))
+		if len(eds)>=k:
+			break
+	print(eds)
 
 
 def cliqueChecker(gr,C1,U1,U2,p1):
@@ -82,7 +108,7 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 			newgr=gr.copy()
 			U11=list(U1)
 			U22=list(U2)
-			U11.extend(list(h.nodes))
+			U11.append(list(h.nodes))
 			U22=[x for x in U2 if x in list(h.nodes)]
 			newgr.remove_nodes_from(list(h.nodes))
 			recc(newgr,C1,U11,U22,p1-n+1)
