@@ -5,7 +5,7 @@ import networkx as nx
 G=nx.Graph()
 
 #parameter[if there is a k-eds?] 
-k=4
+k=3
 
 # max size possible for vc [p<0 => NO instance]
 p=2*k
