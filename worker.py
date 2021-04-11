@@ -5,7 +5,7 @@ import networkx as nx
 G=nx.Graph()
 
 #parameter[if there is a k-eds?] 
-k=3
+k=2
 
 # max size possible for vc [p<0 => NO instance]
 p=2*k
@@ -62,6 +62,7 @@ def recc(gr,C1,U1,U2,p1):
 		print("--------------")
 	else:
 		print(C1)
+		print(U1)
 		print("YES")
 	# if p1<0:
 	# 	return false
