@@ -1,6 +1,6 @@
 # networkx is a Python language software package for the creation, manipulation, and study of the structure, dynamics, and function of complex networks(like graphs!).
 import networkx as nx
-
+from itertools import chain, combinations
 # input graph in question
 G=nx.Graph()
 
@@ -50,13 +50,20 @@ ve=sorted(G.degree,key=lambda x:x[1],reverse=True)[0][0]
 # making it recursive
 def recc(gr,C1,U1,U2,p1):
 	if p1>=0 and len(U2)!=0:
-		cliqueChecker(gr,C1,U1,U2,p1)
-		# print(C1)
-		# print(p1)
-		fourCycles(gr,C1,U1,U2,p1)
-		tailIdentifier(gr,C1,U1,U2,p1)
-		# tailBrancher() has been called in above func
-		# recc()
+		if isU2done(gr,C1,U1,U2,p1)==1:
+			print("callon@paths")
+			# callOn2paths(gr,C1,U1,U2,p1)
+		elif isU2done(gr,C1,U1,U2,p1)==0:
+			print("no")
+			print("--------------")
+		else:
+			cliqueChecker(gr,C1,U1,U2,p1)
+			# print(C1)
+			# print(p1)
+			fourCycles(gr,C1,U1,U2,p1)
+			tailIdentifier(gr,C1,U1,U2,p1)
+			# tailBrancher() has been called in above func
+			# recc()
 	elif p1<0:
 		print(p1)
 		print("--------------")
@@ -70,6 +77,8 @@ def recc(gr,C1,U1,U2,p1):
 	# 	return false
 	# else check for 2-path thing
 
+
+# need to be more efficient
 def enumerator(GG,CC,UU):
 	eds=[]
 	s=G.subgraph(CC)
@@ -93,6 +102,54 @@ def enumerator(GG,CC,UU):
 		if len(eds)>=k:
 			break
 	print(eds)
+
+
+
+def isU2done(gr,C1,U1,U2,p1):
+	u2graph=G.subgraph(U2)
+	for l in list(nx.connected_components(u2graph)):
+		if len(l)!=3:
+			return -1
+	if len(list(nx.connected_components(u2graph)))>min(p1,k):
+		return 0
+	return 1
+
+
+def powerset(iterable,z):
+	s=list(iterable)
+	return chain.from_iterable(combinations(s,r) for r in range(1,z+1))
+
+def callOn2paths(gr,C1,U1,U2,p1):
+	print("2path mode")
+	u2graph=G.subgraph(U2)
+	P=list(nx.connected_components(u2graph))
+	y=len(P)
+	z=min(p1-y,k-y)
+	Psubs=list(powerset(P,z))
+	for subs in Psubs:
+		# for each v0v1v2, move (v1v2 to C and v1 to U1)
+		C11=list(C1)
+		U11=list(U1)
+		if u2graph.degree(subs[0])==2:
+			C11.extend([subs[1],subs[2]])
+			U11.append(subs[0])
+		elif u2graph.degree(subs[1])==2:
+			C11.extend([subs[0],subs[2]])
+			U11.append(subs[1])
+		else:
+			C11.extend([subs[0],subs[1]])
+			U11.append(subs[2])
+		U22=list(U2)
+		U22=[x for x in U2 if x in C11]
+		p11=p1-2
+		U2new=gr.subgraph(U22)
+		recc(U2new,C11,U11,U22,p11)
+		# move each in P-P', move v1 to C and (v0v2) to U1
+
+
+
+
+
 
 
 def cliqueChecker(gr,C1,U1,U2,p1):
@@ -182,17 +239,26 @@ def tailBrancher(gr,C1,U1,U2,p1,nbrs,v):
 
 
 # for (ve,de) in sorted(G.degree,key=lambda x:x[1],reverse=True):
-	# branch incl ve
+# branch incl ve
 C1=list(C)
 p1=p
 C1.append(ve)
 p1=p1-1
 U21=G.copy()
 U21.remove_nodes_from(C1)
-recc(U21,C1,U1,U2,p1)
-# print("////////////////////////////////")
-	# branch without ve
-	# recc(G.copy,list(C)+list(G.neighbors(ve)),list(U1),list(U2),p-(len(list(G.neighbors(ve)))))
+U212=list(U21.nodes)
+recc(U21,C1,U1,U212,p1)
+
+print("////////////////////////////////")
+
+# branch without ve
+C2=list(C)
+C2.extend(list(G.neighbors(ve)))
+p2=p-len(list(G.neighbors(ve)))
+U22=G.copy()
+U22.remove_nodes_from(C2)
+U222=list(U22.nodes)
+recc(U22,C2,U1,U22,p2)
 
 
 
