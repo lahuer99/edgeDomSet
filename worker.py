@@ -34,6 +34,10 @@ G.add_edge(5,6);
 vertices=list(G.nodes)
 edges=list(G.edges)
 
+# to store min_VCs got and give back min-eds
+# let it init be set of edges of graph, if one lesser than that is got,we update eds
+eds=edges
+
 # print(sorted(G.degree,key=lambda x:x[1],reverse=True)[0])
 
 # check starting branching with each vertex recursively
@@ -65,15 +69,24 @@ def recc(gr,C1,U1,U2,p1):
 		print(p1)
 		print("--------------")
 	else:
-		# print(C1)
-		# print(U1)
-		# print(U2)
+		print(C1)
+		print(U1)
+		print(U2)
 		enumerator(gr,C1,U1)
 		print("YES")
 
 
 
 # need to be more efficient
+def theenumerator(GG,CC,UU):
+	# keep track of untouched vertices
+	untracked=vertices
+	# init make best out of vc
+	
+
+
+
+
 def enumerator(GG,CC,UU):
 	eds=[]
 	s=G.subgraph(CC)
