@@ -69,48 +69,63 @@ def recc(gr,C1,U1,U2,p1):
 		print(p1)
 		print("--------------")
 	else:
-		print(C1)
-		print(U1)
-		print(U2)
-		enumerator(gr,C1,U1)
+		# print(C1)
+		# print(U1)
+		# print(U2)
 		print("YES")
+		theenumerator(gr,C1,U1)
+		print("---------------")
+		
+# now have to remove that vertex,its edges and its neighbors from untracked_ and lookinto
+def cleanup(untracked_vertices,untracked_edges,lookinto,v1,v2):
+	nei_v1=list(nx.all_neighbors(G,v1))
+	edges_v1=list(G.edges(v1))
+
+	nei_v2=list(nx.all_neighbors(G,v2))
+	edges_v2=list(G.edges(v2))
+
+	new_untrv=[x for x in untracked_vertices if x not in nei_v1 and x not in nei_v2]
+	new_untre=[(w1,w2) for w1,w2 in untracked_edges if (w1,w2) not in edges_v1 and (w1,w2) not in edges_v2]
+	new_lo=[x for x in lookinto if x not in nei_v1 and x not in nei_v2]
+	return new_untrv,new_untre,new_lo
 
 
-
-# need to be more efficient
 def theenumerator(GG,CC,UU):
 	# keep track of untouched vertices
-	untracked=vertices
+	untracked_edges=list(edges)
+	untracked_vertices=list(vertices)
+
+	lookinto=[]
+	edslite=[]
 	# init make best out of vc
-	
+	# need to be by degree
+	for v1,v2 in edges:
+		if v1 in CC and v2 in CC:
+			edslite.append((v1,v2))
+			untracked_vertices,untracked_edges,lookinto=cleanup(untracked_vertices,untracked_edges,lookinto,v1,v2)
 
-
-
-
-def enumerator(GG,CC,UU):
-	eds=[]
-	s=G.subgraph(CC)
-	for l in UU:
-		sd=G.subgraph(l)
-		if len(list(sd.edges))!=0:
-			eds.append(list(sd.edges)[0])
-		else:
-			un_v=l[0]
-			nei_set=set(list(nx.all_neighbors(G,un_v)))
-			sd.edges()
-			c_set=[x for x in list(s.nodes) if len(s.edges(x))==0]
-			if len(nei_set.intersection(c_set))>0:
-				eds.append((un_v,list(nei_set.intersection(c_set))[0]))
-			else:
-				eds.append((un_v,list(nx.all_neighbors(G,un_v))[0]))
-	eds.extend(list(s.edges))
-	for ve in CC:
-		if len([item for item in eds if item[0]==ve or item[1]==ve])==0:
-			eds.append((ve,list(nx.all_neighbors(G,ve))[0]))
-		if len(eds)>=k:
+		if len(untracked_edges)==0:
+			print(edslite)
 			break
-	print(eds)
 
+	if len(CC)!=0:
+		lookinto.extend(CC)
+
+	# from U1, if any 2size clique(edge!) exists and is not covered,then add
+	for l in UU:
+		if len(l)==2:
+			if (l[0],l[1]) in untracked_edges or (l[1],l[0]) in untracked_edges:
+				edslite.append((l[0],l[1]))
+				untracked_vertices,untracked_edges,lookinto=cleanup(untracked_vertices,untracked_edges,lookinto,l[0],l[1])
+		elif len(l)==1 and l[0] in untracked_vertices:
+			lookinto.append(l[0])
+
+		# else if we have a clique of >2 size,we can check if any of its nodes have an edge with any node in lookinto or untracked_vertices
+
+		if len(untracked_edges)==0:
+			break
+	print(untracked_edges)
+	print(edslite)
 
 
 def isU2done(gr,C1,U1,U2,p1):

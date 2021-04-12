@@ -14,21 +14,21 @@ p=2*k
 G.add_node(0)
 G.add_node(1)
 G.add_node(2)
-# G.add_node(3)
-# G.add_node(4)
+G.add_node(3)
+G.add_node(4)
 G.add_node(5)
 G.add_node(6)
 G.add_node(7)
 
 # adding edges of graph
 G.add_edge(0,1)
-# G.add_edge(0,7);
+G.add_edge(0,7);
 G.add_edge(7,6);
 G.add_edge(1,2);
-# G.add_edge(2,3);
-# G.add_edge(3,4);
-# G.add_edge(2,4);
-# G.add_edge(4,5);
+G.add_edge(2,3);
+G.add_edge(3,4);
+G.add_edge(2,4);
+G.add_edge(4,5);
 G.add_edge(5,6);
 
 vertices=list(G.nodes)
@@ -40,15 +40,17 @@ edges=list(G.edges)
 C=I=U1=[]
 U2=vertices
 
-def powerset(iterable,z):
-	s=list(iterable)
-	return chain.from_iterable(combinations(s,r) for r in range(1,z+1))
+print(sorted(G.degree,key=lambda x:x[1],reverse=True))
 
-# check for 4 cycles
-# print(list(nx.cycle_basis(G)))
-# print(G.edges(0))
-u2graph=G.subgraph(U2)
-P=list(nx.connected_components(u2graph))
-Psubs=list(powerset(P,4))
-print(Psubs)
-print(type(Psubs[0][0]))
+# def powerset(iterable,z):
+# 	s=list(iterable)
+# 	return chain.from_iterable(combinations(s,r) for r in range(1,z+1))
+
+# # check for 4 cycles
+# # print(list(nx.cycle_basis(G)))
+# # print(G.edges(0))
+# u2graph=G.subgraph(U2)
+# P=list(nx.connected_components(u2graph))
+# Psubs=list(powerset(P,4))
+# print(Psubs)
+# print(type(Psubs[0][0]))
