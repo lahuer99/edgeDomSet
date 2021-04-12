@@ -1,6 +1,9 @@
 # networkx is a Python language software package for the creation, manipulation, and study of the structure, dynamics, and function of complex networks(like graphs!).
 import networkx as nx
+
+#to get the powerset 
 from itertools import chain, combinations
+
 # input graph in question
 G=nx.Graph()
 
@@ -57,9 +60,6 @@ def recc(gr,C1,U1,U2,p1):
 			# print(U2)
 			print("callon2paths")
 			callOn2paths(gr,C1,U1,U2,p1)
-		# elif isU2done(gr,C1,U1,U2,p1):
-		# 	print("no")
-		# 	print("--------------")
 		else:
 			# print(U2)
 			cliqueChecker(gr,C1,U1,U2,p1)
@@ -91,14 +91,14 @@ def cleanup(untracked_vertices,untracked_edges,lookinto,v1,v2):
 
 
 def theenumerator(GG,CC,UU):
-	# keep track of untouched vertices
+	# keep track of untouched vertices n edges
 	untracked_edges=list(edges)
 	untracked_vertices=list(vertices)
 
 	lookinto=[]
 	edslite=[]
 	# init make best out of vc
-	# need to be by degree
+	# need to be by degree?
 	for v1,v2 in edges:
 		if v1 in CC and v2 in CC:
 			edslite.append((v1,v2))
@@ -213,6 +213,7 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 		n=len(list(h.nodes))
 		if h.size()==n*(n-1)/2 or n==1:
 			# we have a clique component; move it to U1 and create new state and recc
+
 			# print("Yes")
 			newgr=gr.copy()
 			U11=list(U1)
@@ -248,22 +249,15 @@ def fourCycles(gr,C1,U1,U2,p1):
 				C12.extend([sn[2],sn[3]])
 
 			newgr=gr.copy()
-			# C11=list(C1)
 			U11=list(U1)
 			newgr.remove_nodes_from(l)
-			# C11.extend([sn[0],sn[2]])
-			# U22=list(U2)
-			# U22=[x for x in U2 if x not in list(s.nodes)]
 			U22=list(newgr.nodes)
 			recc(newgr,C11,U11,U22,p1-2)
+
 			# now have to add the other edge set
 			newgr1=gr.copy()
-			# C12=list(C1)
 			U12=list(U1)
 			newgr1.remove_nodes_from(l)
-			# C12.extend([s.edges[1],s.edges[3]])
-			# U222=list(U2)
-			# U222=[x for x in U2 if x not in list(s.nodes)]
 			U222=list(newgr1.nodes)
 			recc(newgr1,C12,U12,U222,p1-2)			
 
@@ -322,8 +316,8 @@ def tailBrancher(gr,C1,U1,U2,p1,nbrs,v):
 
 
 # for (ve,de) in sorted(G.degree,key=lambda x:x[1],reverse=True):
+
 # branch incl ve
-# print(ve)
 C1=list(C)
 # p1=p
 C1.append(ve)
