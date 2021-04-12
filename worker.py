@@ -27,8 +27,8 @@ G.add_edge(7,6);
 G.add_edge(1,2);
 G.add_edge(2,3);
 G.add_edge(3,4);
-G.add_edge(2,4);
-G.add_edge(4,5);
+G.add_edge(5,4);
+G.add_edge(4,2);
 G.add_edge(5,6);
 
 vertices=list(G.nodes)
@@ -51,19 +51,16 @@ ve=sorted(G.degree,key=lambda x:x[1],reverse=True)[0][0]
 def recc(gr,C1,U1,U2,p1):
 	if p1>=0 and len(U2)!=0:
 		if isU2done(gr,C1,U1,U2,p1)==1:
-			print("callon@paths")
-			# callOn2paths(gr,C1,U1,U2,p1)
+			print("callon2paths")
+			callOn2paths(gr,C1,U1,U2,p1)
 		elif isU2done(gr,C1,U1,U2,p1)==0:
 			print("no")
 			print("--------------")
 		else:
+			# print(U2)
 			cliqueChecker(gr,C1,U1,U2,p1)
-			# print(C1)
-			# print(p1)
 			fourCycles(gr,C1,U1,U2,p1)
 			tailIdentifier(gr,C1,U1,U2,p1)
-			# tailBrancher() has been called in above func
-			# recc()
 	elif p1<0:
 		print(p1)
 		print("--------------")
@@ -73,9 +70,7 @@ def recc(gr,C1,U1,U2,p1):
 		# print(U2)
 		enumerator(gr,C1,U1)
 		print("YES")
-	# if p1<0:
-	# 	return false
-	# else check for 2-path thing
+
 
 
 # need to be more efficient
@@ -106,12 +101,14 @@ def enumerator(GG,CC,UU):
 
 
 def isU2done(gr,C1,U1,U2,p1):
+	# print("getin")
 	u2graph=G.subgraph(U2)
 	for l in list(nx.connected_components(u2graph)):
 		if len(l)!=3:
 			return -1
 	if len(list(nx.connected_components(u2graph)))>min(p1,k):
 		return 0
+	# print(list(nx.connected_components(u2graph)))
 	return 1
 
 
@@ -128,23 +125,44 @@ def callOn2paths(gr,C1,U1,U2,p1):
 	Psubs=list(powerset(P,z))
 	for subs in Psubs:
 		# for each v0v1v2, move (v1v2 to C and v1 to U1)
-		C11=list(C1)
-		U11=list(U1)
-		if u2graph.degree(subs[0])==2:
-			C11.extend([subs[1],subs[2]])
-			U11.append(subs[0])
-		elif u2graph.degree(subs[1])==2:
-			C11.extend([subs[0],subs[2]])
-			U11.append(subs[1])
-		else:
-			C11.extend([subs[0],subs[1]])
-			U11.append(subs[2])
-		U22=list(U2)
-		U22=[x for x in U2 if x in C11]
-		p11=p1-2
-		U2new=gr.subgraph(U22)
-		recc(U2new,C11,U11,U22,p11)
-		# move each in P-P', move v1 to C and (v0v2) to U1
+		print(subs)
+		for path2 in subs:
+			C11=list(C1)
+			U11=list(U1)
+			path2=list(path2)
+			if u2graph.degree(path2[0])==2:
+				C11.extend([path2[1],path2[2]])
+				U11.append([path2[0]])
+			elif u2graph.degree(path2[1])==2:
+				C11.extend([path2[0],path2[2]])
+				U11.append([path2[1]])
+			else:
+				C11.extend([path2[0],path2[1]])
+				U11.append([path2[2]])
+			# U22=list(U2)
+			U22=[x for x in U2 if x in C11]
+			p11=p1-2
+			U2new=gr.subgraph(U22)
+			recc(U2new,C11,U11,U22,p11)
+		# move each in P-P', move v1 to C and (v0v2) to U1 
+		for path2 in [x for x in Psubs if x!=subs]:
+			C11=list(C1)
+			U11=list(U1)
+			path2=list(path2)
+			if u2graph.degree(path2[0])==2:
+				U11.append([path2[1],path2[2]])
+				C11.append(path2[0])
+			elif u2graph.degree(path2[1])==2:
+				U11.append([path2[0],path2[2]])
+				C11.append(path2[1])
+			else:
+				U11.append([path2[0],path2[1]])
+				C11.append(path2[2])
+			U22=list(U2)
+			U22=[x for x in U2 if x in C11]
+			p11=p1-2
+			U2new=gr.subgraph(U22)
+			recc(U2new,C11,U11,U22,p11)			
 
 
 
@@ -159,7 +177,7 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 	for c in list(nx.connected_components(gr)):
 		h=gr.subgraph(c)
 		n=len(list(h.nodes))
-		if h.size()==n*(n-1)/2:
+		if h.size()==n*(n-1)/2 or n==1:
 			# we have a clique component; move it to U1 and create new state and recc
 			# print("Yes")
 			newgr=gr.copy()
@@ -175,17 +193,27 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 def fourCycles(gr,C1,U1,U2,p1):
 	for l in list(nx.cycle_basis(gr)):
 		if len(l)==4:
+			print("4cycle")
 			# we have a 4cycle; we have to branch with ab,cd or bc,ad
 			s=gr.subgraph(l)
+
 			newgr=gr.copy()
 			C11=list(C1)
 			U11=list(U1)
 			newgr.remove_nodes_from(l)
 			C11.extend([s.edges[0],s.edges[2]])
-			U22=list(U2)
-			U22=[x for x in U2 if x in list(s.nodes)]
+			# U22=list(U2)
+			U22=[x for x in U2 if x not in list(s.nodes)]
 			recc(newgr,C11,U11,U22,p1-2)
 			# now have to add the other edge set
+			newgr1=gr.copy()
+			C12=list(C1)
+			U12=list(U1)
+			newgr1.remove_nodes_from(l)
+			C12.extend([s.edges[1],s.edges[3]])
+			# U222=list(U2)
+			U222=[x for x in U2 if x not in list(s.nodes)]
+			recc(newgr1,C12,U12,U222,p1-2)			
 
 
 
@@ -240,6 +268,7 @@ def tailBrancher(gr,C1,U1,U2,p1,nbrs,v):
 
 # for (ve,de) in sorted(G.degree,key=lambda x:x[1],reverse=True):
 # branch incl ve
+# print(ve)
 C1=list(C)
 p1=p
 C1.append(ve)
