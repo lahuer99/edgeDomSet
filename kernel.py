@@ -68,8 +68,8 @@ else:
 		if x+len(M)>2*k:
 			overloaded_v.append(v)
 
-	A1=overloaded_v + v_nei1
-
+	A1=list(set(overloaded_v).union(set(v_nei1)))
+	print(A1)
 	to_del=[]
 	for v in v1:
 		if all(x in A1 for x in nx.all_neighbors(G,x)):
@@ -77,14 +77,15 @@ else:
 
 	# print(to_del)
 	G1.remove_nodes_from(to_del)
-	# print(list(G.nodes))
+	print(list(G1.nodes))
 
 	v_toadd=[]
 	ed_toadd=[]
 	for v in A1:
-		w=[x for x in nx.all_neighbors(G,v) if x in v1][0]
-		v_toadd.append(w)
-		ed_toadd.append((v,w))
+		w=[x for x in nx.all_neighbors(G,v) if x in v1]
+		if len(w)!=0:
+			v_toadd.append(w[0])
+			ed_toadd.append((v,w[0]))
 
 	G2=nx.Graph()
 	for v in v_toadd:
@@ -95,7 +96,7 @@ else:
 	# Gf is final graph after kernelization
 	Gf=nx.compose(G1,G2)
 
-
+	print(list(Gf.nodes()))
 
 	# overloaded_v will be the subset of eds
 	# from lemma => all overloaded vertices must be in vertex set of eds
