@@ -20,19 +20,19 @@ G.add_node(2)
 G.add_node(3)
 G.add_node(4)
 G.add_node(5)
-# G.add_node(6)
-# G.add_node(7)
+G.add_node(6)
+G.add_node(7)
 
 # adding edges of graph
 G.add_edge(0,1)
-G.add_edge(0,5);
-# G.add_edge(7,6);
+G.add_edge(0,7);
+G.add_edge(7,6);
 G.add_edge(1,2);
 G.add_edge(2,3);
 G.add_edge(3,4);
-# G.add_edge(0,2);
+G.add_edge(4,2);
 G.add_edge(4,5);
-# G.add_edge(5,6);
+G.add_edge(5,6);
 
 vertices=list(G.nodes)
 edges=list(G.edges)
@@ -61,13 +61,18 @@ def recc(gr,C1,U1,U2,p1):
 			print("callon2paths")
 			callOn2paths(gr,C1,U1,U2,p1)
 		else:
-			# print(U2)
+			print("''''")
+			print(p1)
+			print(C1)
+			print(U1)
+			print(U2)
+			print("''''")
 			cliqueChecker(gr,C1,U1,U2,p1)
 			fourCycles(gr,C1,U1,U2,p1)
 			tailIdentifier(gr,C1,U1,U2,p1)
 	elif p1<0:
 		print(p1)
-		print("--------------")
+		print("----/////////////////////////////////----")
 	else:
 		# print(C1)
 		# print(U1)
@@ -92,6 +97,9 @@ def cleanup(untracked_vertices,untracked_edges,lookinto,v1,v2):
 
 def theenumerator(GG,CC,UU):
 	# keep track of untouched vertices n edges
+	print("enum")
+	print(CC)
+	print(UU)
 	untracked_edges=list(edges)
 	untracked_vertices=list(vertices)
 
@@ -204,6 +212,7 @@ def callOn2paths(gr,C1,U1,U2,p1):
 
 
 def cliqueChecker(gr,C1,U1,U2,p1):
+	print(U2)
 	if(gr==G and not(nx.is_connected(gr))):
 		m=len(list(h.nodes))
 		if gr.size()!=m*(m-1)/2:
@@ -212,6 +221,8 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 		h=gr.subgraph(c)
 		n=len(list(h.nodes))
 		if h.size()==n*(n-1)/2 or n==1:
+			print("clique")
+			print(list(h.nodes()))
 			# we have a clique component; move it to U1 and create new state and recc
 
 			# print("Yes")
@@ -222,6 +233,12 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 			# U22=[x for x in U2 if x in list(h.nodes)]
 			newgr.remove_nodes_from(list(h.nodes))
 			U22=list(newgr.nodes)
+			print("''''")
+			print(p1)
+			print(C1)
+			print(U1)
+			print(U2)
+			print("''''")
 			recc(newgr,C1,U11,U22,p1-n+1)
 
 
@@ -281,6 +298,7 @@ def tailIdentifier(gr,C1,U1,U2,p1):
 		del nbrs[k]
 	
 	for ver in list(nbrs.keys()):
+		print(ver)
 		tailBrancher(gr,C1,U1,U2,p1,nbrs,ver)
 
 
@@ -295,12 +313,13 @@ def tailBrancher(gr,C1,U1,U2,p1,nbrs,v):
 	# vat is the deg2 vertex on which we have to further branch:2 cases - either incl vat or n(vat)
 	# so we modify current graph and call recc on that
 	C1d=list(C1)
-	p1d=p1-2
+	p1d=p1-1
 	C1d.append(vat)
 	U12=list(U1)
 	newG=gr.copy()
 	newG.remove_node(vat)
 	U21=list(newG.nodes)
+	print(U21)
 	recc(newG,C1d,U12,U21,p1d)
 
 	# ToDo branch of neighbors of vat
@@ -316,7 +335,7 @@ def tailBrancher(gr,C1,U1,U2,p1,nbrs,v):
 
 
 # for (ve,de) in sorted(G.degree,key=lambda x:x[1],reverse=True):
-
+print(ve)
 # branch incl ve
 C1=list(C)
 # p1=p
@@ -325,6 +344,12 @@ p1=p-1
 U21=G.copy()
 U21.remove_nodes_from(C1)
 U212=list(U21.nodes)
+print("''''")
+print(p1)
+print(C1)
+print(U1)
+print(U212)
+print("''''")
 recc(U21,C1,U1,U212,p1)
 
 print("////////////////////////////////")
