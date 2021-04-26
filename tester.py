@@ -1,6 +1,8 @@
 # networkx is a Python language software package for the creation, manipulation, and study of the structure, dynamics, and function of complex networks(like graphs!).
 import networkx as nx
 from itertools import chain, combinations
+
+import kernelization
 # input graph in question
 G=nx.Graph()
 
@@ -23,7 +25,7 @@ G.add_node(7)
 # adding edges of graph
 G.add_edge(0,1)
 G.add_edge(0,7);
-G.add_edge(7,6);
+G.add_edge(6,7);
 G.add_edge(1,2);
 G.add_edge(2,3);
 G.add_edge(3,4);
@@ -40,17 +42,27 @@ edges=list(G.edges)
 C=I=U1=[]
 U2=vertices
 
-print(sorted(G.degree,key=lambda x:x[1],reverse=True))
+# print(sorted(G.degree,key=lambda x:x[1],reverse=True))
 
-# def powerset(iterable,z):
-# 	s=list(iterable)
-# 	return chain.from_iterable(combinations(s,r) for r in range(1,z+1))
+# print([x[0] for x in sorted(G.degree,key=lambda x:x[1],reverse=True) if x[1]>=3])
 
-# # check for 4 cycles
-# # print(list(nx.cycle_basis(G)))
-# # print(G.edges(0))
-# u2graph=G.subgraph(U2)
-# P=list(nx.connected_components(u2graph))
-# Psubs=list(powerset(P,4))
-# print(Psubs)
-# print(type(Psubs[0][0]))
+# Gcopy=G.copy()
+# Gdash=G.copy()
+
+# CC=[2,7,4,6]
+# UU=[[0,1],[3]]
+# Gcopy.remove_nodes_from([i for i in vertices + CC if i not in vertices or i not in CC])
+
+
+# toremove=list(nx.maximal_matching(Gcopy))
+# print(toremove)
+
+
+
+# for u,v in toremove:
+# 	Gdash.remove_edges_from(list(G.edges(u)))
+# 	Gdash.remove_edges_from(list(G.edges(v)))
+
+# print(Gdash.nodes())
+
+# print(Gdash.edges())

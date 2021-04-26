@@ -1,6 +1,7 @@
 mehh/
 *.pdf
 *.png
+__pycache__/
 lookinto/
 a.out
 ToDo
