@@ -2,7 +2,7 @@
 import networkx as nx
 from itertools import chain, combinations
 
-import kernelization
+# import kernelization
 # input graph in question
 G=nx.Graph()
 
@@ -46,23 +46,31 @@ U2=vertices
 
 # print([x[0] for x in sorted(G.degree,key=lambda x:x[1],reverse=True) if x[1]>=3])
 
-# Gcopy=G.copy()
-# Gdash=G.copy()
+Gcopy=G.copy()
+Gdash=G.copy()
 
-# CC=[2,7,4,6]
-# UU=[[0,1],[3]]
-# Gcopy.remove_nodes_from([i for i in vertices + CC if i not in vertices or i not in CC])
-
-
-# toremove=list(nx.maximal_matching(Gcopy))
-# print(toremove)
+CC=[2,7,4,6]
+UU=[[0,1],[3]]
+Gcopy.remove_nodes_from([i for i in vertices + CC if i not in vertices or i not in CC])
 
 
+toremove=list(nx.maximal_matching(Gcopy))
+print(toremove)
 
-# for u,v in toremove:
-# 	Gdash.remove_edges_from(list(G.edges(u)))
-# 	Gdash.remove_edges_from(list(G.edges(v)))
 
-# print(Gdash.nodes())
 
-# print(Gdash.edges())
+for u,v in toremove:
+	# Gdash.remove_edges_from(list(G.edges(u)))
+	# Gdash.remove_edges_from(list(G.edges(v)))
+	Gdash.remove_node(u)
+	Gdash.remove_node(v)
+
+print(Gdash.nodes())
+
+print(Gdash.edges())
+
+for ve in CC:
+		# k1-=1
+	print("''''''")
+	print(ve)
+	print(sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True))

@@ -7,12 +7,13 @@ from itertools import chain, combinations
 # kernelization module(kernelization.py)
 import kernelization
 
+theds=[]
 
 # making it recursive
 def recc(gr,C1,U1,U2,p1):
 	if p1>=0 and len(U2)!=0:
 		if isU2done(gr,C1,U1,U2,p1):
-			print("callon2paths")
+			# print("callon2paths")
 			callOn2paths(gr,C1,U1,U2,p1)
 		else:
 			cliqueChecker(gr,C1,U1,U2,p1)
@@ -21,12 +22,13 @@ def recc(gr,C1,U1,U2,p1):
 			vertexPicker(gr,C1,U1,U2,p1)
 			
 	elif p1<0:
-		print(p1)
-		print("----/////////////////////////////////----")
+		p1=p1
+		# print(p1)
+		# print("----/////////////////////////////////----")
 	else:
-		print("YES")
+		# print("YES")
 		theenumerator(gr,C1,U1)
-		print("---------------")
+		# print("---------------")
 	
 def vertexPicker(gr,C1,U1,U2,p1):
 	vl=[x[0] for x in sorted(gr.degree,key=lambda x:x[1],reverse=True) if x[1]>=3]
@@ -82,26 +84,54 @@ def theenumerator(GG,CC,UU):
 	UU1=list(UU)
 
 	for u,v in toremove:
-		Gdash.remove_edges_from(list(G.edges(u)))
-		Gdash.remove_edges_from(list(G.edges(v)))
+		if u in list(Gdash.nodes):
+			Gdash.remove_node(u)
+		if v in list(Gdash.nodes):
+			Gdash.remove_node(v)
+		if u in CC:
+			CC.remove(u)
+		if v in CC:
+			CC.remove(v)
 
 		k1-=1
 		eds.append((u,v))
-		if k1<=0:
-			print(eds)
+		if k1<=0 and len(list(Gdash.edges))==0:
+			# print(eds)
+			theds.append(eds)
 			return	
 	
 	if k1-len(list(Gdash.edges))>=0:
 		eds.extend(list(Gdash.edges))
-		print(eds)
+		# print(eds)
+		theds.append(eds)
 		return
 
-	# print(CC)
-	# print(A1)
-	# print(UU)
+	for ve in CC:
+		k1-=1
+		chve=sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True)[0][1]
+		eds.append((ve,chve))
+		if ve in list(Gdash.nodes):
+			Gdash.remove_node(ve)
+		if chve in list(Gdash.nodes):
+			Gdash.remove_node(chve)
+
+		if ve in CC:
+			CC.remove(ve)
+		if chve in CC:
+			CC.remove(chve)
+		if k1<=0 and len(list(Gdash.edges))==0:
+			# print(eds)
+			theds.append(eds)
+			return	
+
+	# CC=[]
 	# print(eds)
-	# print(list(Gdash.edges))
-	print("etheetila")
+	# print(CC)	
+	# print(Gdash.edges)
+	# print(Gdash.nodes)
+	theds.append(list(G.edges))
+	# print("etheetila")
+
 
 	
 
@@ -114,7 +144,7 @@ def powerset(iterable,z):
 	return chain.from_iterable(combinations(s,r) for r in range(1,z+1))
 
 def callOn2paths(gr,C1,U1,U2,p1):
-	print("2path mode")
+	# print("2path mode")
 	u2graph=G.subgraph(U2)
 	P=list(nx.connected_components(u2graph))
 	y=len(P)
@@ -296,3 +326,8 @@ if len(vertices)==0:
 	exit()
 else:
 	recc(G,C,U1,U2,p)
+	if len(theds)==0:
+		print("NO")
+	else:
+		print("YES")
+		print(min(theds,key=len))
