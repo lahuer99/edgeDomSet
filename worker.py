@@ -10,16 +10,16 @@ import kernelization
 theds=[]
 
 # making it recursive
-def recc(gr,C1,U1,U2,p1):
+def recc(gr,C1,I1,U1,U2,p1):
 	if p1>=0 and len(U2)!=0:
-		if isU2done(gr,C1,U1,U2,p1):
+		if isU2done(gr,C1,I1,U1,U2,p1):
 			# print("callon2paths")
-			callOn2paths(gr,C1,U1,U2,p1)
+			callOn2paths(gr,C1,I1,U1,U2,p1)
 		else:
-			cliqueChecker(gr,C1,U1,U2,p1)
-			fourCycles(gr,C1,U1,U2,p1)
-			tailIdentifier(gr,C1,U1,U2,p1)
-			vertexPicker(gr,C1,U1,U2,p1)
+			cliqueChecker(gr,C1,I1,U1,U2,p1)
+			fourCycles(gr,C1,I1,U1,U2,p1)
+			tailIdentifier(gr,C1,I1,U1,U2,p1)
+			vertexPicker(gr,C1,I1,U1,U2,p1)
 			
 	elif p1<0:
 		p1=p1
@@ -27,10 +27,10 @@ def recc(gr,C1,U1,U2,p1):
 		# print("----/////////////////////////////////----")
 	else:
 		# print("YES")
-		theenumerator(gr,C1,U1)
+		theenumerator(gr,C1,I1,U1)
 		# print("---------------")
 	
-def vertexPicker(gr,C1,U1,U2,p1):
+def vertexPicker(gr,C1,I1,U1,U2,p1):
 	vl=[x[0] for x in sorted(gr.degree,key=lambda x:x[1],reverse=True) if x[1]>=3]
 	if len(vl)==0:
 		return 
@@ -43,17 +43,19 @@ def vertexPicker(gr,C1,U1,U2,p1):
 	U21=gr.copy()
 	U21.remove_nodes_from(C11)
 	U212=list(U21.nodes)
-	recc(U21,C11,U1,U212,p11)
+	recc(U21,C11,I1,U1,U212,p11)
 
 	# print("////////////////////////////////")
 	
 	C2=list(C1)
 	C2.extend(list(gr.neighbors(ve)))
+	I11=list(I1)
+	I11.append(ve)
 	p2=p1-len(list(gr.neighbors(ve)))
 	U22=gr.copy()
 	U22.remove_nodes_from(C2)
 	U222=list(U22.nodes)
-	recc(U22,C2,U1,U222,p2)
+	recc(U22,C2,I11,U1,U222,p2)
 
 
 
@@ -71,7 +73,8 @@ def cleanup(untracked_vertices,untracked_edges,lookinto,v1,v2):
 	return new_untrv,new_untre,new_lo
 
 
-def theenumerator(GG,CC,UU):
+def theenumerator(GG,CC,II,UU):
+	# < need to deal with II>
 	Gdash=G.copy()
 	k1=k
 	eds=[]
@@ -135,7 +138,7 @@ def theenumerator(GG,CC,UU):
 
 	
 
-def isU2done(gr,C1,U1,U2,p1):
+def isU2done(gr,C1,I1,U1,U2,p1):
 	u2graph=gr.subgraph(U2)
 	return all(len(list(x))==3 for x in list(nx.connected_components(u2graph)))
 
@@ -143,7 +146,7 @@ def powerset(iterable,z):
 	s=list(iterable)
 	return chain.from_iterable(combinations(s,r) for r in range(1,z+1))
 
-def callOn2paths(gr,C1,U1,U2,p1):
+def callOn2paths(gr,C1,I1,U1,U2,p1):
 	# print("2path mode")
 	u2graph=G.subgraph(U2)
 	P=list(nx.connected_components(u2graph))
@@ -167,7 +170,7 @@ def callOn2paths(gr,C1,U1,U2,p1):
 			U22=[x for x in U2 if x in C11]
 			p11=p1-2
 			U2new=gr.subgraph(U22)
-			recc(U2new,C11,U11,U22,p11)
+			recc(U2new,C11,I1,U11,U22,p11)
 		# move each in P-P', move v1 to C and (v0v2) to U1 
 		for path2 in [x for x in Psubs if x!=subs]:
 			C11=list(C1)
@@ -189,7 +192,7 @@ def callOn2paths(gr,C1,U1,U2,p1):
 			U22=[x for x in U2 if x in C11]
 			p11=p1-2
 			U2new=gr.subgraph(U22)
-			recc(U2new,C11,U11,U22,p11)			
+			recc(U2new,C11,I1,U11,U22,p11)			
 
 
 
@@ -197,7 +200,7 @@ def callOn2paths(gr,C1,U1,U2,p1):
 
 
 
-def cliqueChecker(gr,C1,U1,U2,p1):
+def cliqueChecker(gr,C1,I1,U1,U2,p1):
 	# if(gr==G and not(nx.is_connected(gr))):
 	# 	m=len(list(h.nodes))
 	# 	if gr.size()!=m*(m-1)/2:
@@ -212,11 +215,11 @@ def cliqueChecker(gr,C1,U1,U2,p1):
 			U11.append(list(h.nodes))
 			newgr.remove_nodes_from(list(h.nodes))
 			U22=list(newgr.nodes)
-			recc(newgr,C1,U11,U22,p1-n+1)
+			recc(newgr,C1,I1,U11,U22,p1-n+1)
 
 
 # now checking for 4-cycles
-def fourCycles(gr,C1,U1,U2,p1):
+def fourCycles(gr,C1,I1,U1,U2,p1):
 	for l in list(nx.cycle_basis(gr)):
 		if len(l)==4:
 			print("4cycle")
@@ -242,19 +245,19 @@ def fourCycles(gr,C1,U1,U2,p1):
 			U11=list(U1)
 			newgr.remove_nodes_from(l)
 			U22=list(newgr.nodes)
-			recc(newgr,C11,U11,U22,p1-2)
+			recc(newgr,C11,I1,U11,U22,p1-2)
 
 			# now have to add the other edge set
 			newgr1=gr.copy()
 			U12=list(U1)
 			newgr1.remove_nodes_from(l)
 			U222=list(newgr1.nodes)
-			recc(newgr1,C12,U12,U222,p1-2)			
+			recc(newgr1,C12,I1,U12,U222,p1-2)			
 
 
 
 
-def tailIdentifier(gr,C1,U1,U2,p1):
+def tailIdentifier(gr,C1,I1,U1,U2,p1):
 	# tail identifier
 	# get deg2 nodes
 	nbrs={}
@@ -271,11 +274,11 @@ def tailIdentifier(gr,C1,U1,U2,p1):
 		del nbrs[k]
 	
 	for ver in list(nbrs.keys()):
-		tailBrancher(gr,C1,U1,U2,p1,nbrs,ver)
+		tailBrancher(gr,C1,I1,U1,U2,p1,nbrs,ver)
 
 
 
-def tailBrancher(gr,C1,U1,U2,p1,nbrs,v):
+def tailBrancher(gr,C1,I1,U1,U2,p1,nbrs,v):
 	if(gr.degree(nbrs[v][0])==1):
 		vat=nbrs[v][1]
 	else:
@@ -290,17 +293,19 @@ def tailBrancher(gr,C1,U1,U2,p1,nbrs,v):
 	newG=gr.copy()
 	newG.remove_node(vat)
 	U21=list(newG.nodes)
-	recc(newG,C1d,U12,U21,p1d)
+	recc(newG,C1d,I1,U12,U21,p1d)
 
 	# branch of neighbors of vat
 	C2d=list(C1)
 	p2d=p1-2
 	C2d.extend(list(nx.all_neighbors(gr,vat)))
 	U12=list(U1)
+	I11=list(I1)
+	I11.append(vat)
 	newG1=gr.copy()
 	newG1.remove_nodes_from(list(nx.all_neighbors(gr,vat)))
 	U22=list(newG1.nodes)
-	recc(newG1,C2d,U12,U22,p2d)
+	recc(newG1,C2d,I11,U12,U22,p2d)
 
 
 # kernel() in module returns kernel graph; if it is empty, kernelization algo. has already given YES/NO output
@@ -325,7 +330,7 @@ U2=vertices
 if len(vertices)==0:
 	exit()
 else:
-	recc(G,C,U1,U2,p)
+	recc(G,C,I,U1,U2,p)
 	if len(theds)==0:
 		print("NO")
 	else:

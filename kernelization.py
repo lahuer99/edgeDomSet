@@ -12,7 +12,7 @@ import networkx as nx
 Gk=nx.Graph()
 
 #parameter[if there is a k-eds?] 
-k=4
+k=3
 
 # adding vertices of graph
 Gk.add_node(0)
