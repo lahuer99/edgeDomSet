@@ -31,7 +31,7 @@ def recc(gr,C1,I1,U1,U2,p1):
 		# print("---------------")
 	
 def vertexPicker(gr,C1,I1,U1,U2,p1):
-	vl=[x[0] for x in sorted(gr.degree,key=lambda x:x[1],reverse=True) if x[1]>=3]
+	vl=[x[0] for x in sorted(gr.degree,key=lambda x:x[1],reverse=True) if x[1]>=2]
 	if len(vl)==0:
 		return 
 
@@ -60,17 +60,17 @@ def vertexPicker(gr,C1,I1,U1,U2,p1):
 
 
 # now have to remove that vertex,its edges and its neighbors from untracked_ and lookinto
-def cleanup(untracked_vertices,untracked_edges,lookinto,v1,v2):
-	nei_v1=list(nx.all_neighbors(G,v1))
-	edges_v1=list(G.edges(v1))
+# def cleanup(untracked_vertices,untracked_edges,lookinto,v1,v2):
+# 	nei_v1=list(nx.all_neighbors(G,v1))
+# 	edges_v1=list(G.edges(v1))
 
-	nei_v2=list(nx.all_neighbors(G,v2))
-	edges_v2=list(G.edges(v2))
+# 	nei_v2=list(nx.all_neighbors(G,v2))
+# 	edges_v2=list(G.edges(v2))
 
-	new_untrv=[x for x in untracked_vertices if x not in nei_v1 and x not in nei_v2]
-	new_untre=[(w1,w2) for w1,w2 in untracked_edges if (w1,w2) not in edges_v1 and (w1,w2) not in edges_v2]
-	new_lo=[x for x in lookinto if x not in nei_v1 and x not in nei_v2]
-	return new_untrv,new_untre,new_lo
+# 	new_untrv=[x for x in untracked_vertices if x not in nei_v1 and x not in nei_v2]
+# 	new_untre=[(w1,w2) for w1,w2 in untracked_edges if (w1,w2) not in edges_v1 and (w1,w2) not in edges_v2]
+# 	new_lo=[x for x in lookinto if x not in nei_v1 and x not in nei_v2]
+# 	return new_untrv,new_untre,new_lo
 
 
 def theenumerator(GG,CC,II,UU):
@@ -78,14 +78,16 @@ def theenumerator(GG,CC,II,UU):
 	Gdash=G.copy()
 	k1=k
 	eds=[]
-
 	Gcopy=G.copy()
 	Gcopy.remove_nodes_from([i for i in vertices + CC if i not in vertices or i not in CC])
 
+	# print("CC")
+	# print(CC)
+	# Gdash.remove_nodes_from(II)
+	# Gcopy.remove_nodes_from(II)
 
 	toremove=list(nx.maximal_matching(Gcopy))
 	UU1=list(UU)
-
 	for u,v in toremove:
 		if u in list(Gdash.nodes):
 			Gdash.remove_node(u)
@@ -99,15 +101,14 @@ def theenumerator(GG,CC,II,UU):
 		k1-=1
 		eds.append((u,v))
 		if k1<=0 and len(list(Gdash.edges))==0:
-			# print(eds)
 			theds.append(eds)
 			return	
 	
 	if k1-len(list(Gdash.edges))>=0:
 		eds.extend(list(Gdash.edges))
-		# print(eds)
 		theds.append(eds)
 		return
+	# rem_enum(eds,Gdash,CC,k1)
 
 	for ve in CC:
 		k1-=1
@@ -118,25 +119,43 @@ def theenumerator(GG,CC,II,UU):
 		if chve in list(Gdash.nodes):
 			Gdash.remove_node(chve)
 
-		if ve in CC:
-			CC.remove(ve)
-		if chve in CC:
-			CC.remove(chve)
-		if k1<=0 and len(list(Gdash.edges))==0:
-			# print(eds)
+		# if ve in CC:
+		# 	CC.remove(ve)
+		# if chve in CC:
+		# 	CC.remove(chve)
+		if len(list(Gdash.edges))==0:
 			theds.append(eds)
 			return	
-
-	# CC=[]
-	# print(eds)
-	# print(CC)	
-	# print(Gdash.edges)
-	# print(Gdash.nodes)
-	theds.append(list(G.edges))
-	# print("etheetila")
-
-
+		if k1<0:
+			return
 	
+	theds.append(list(G.edges))
+
+# def rem_enum(eds,Gdash,CC,k1):
+# 	for ve in CC:
+# 		for d,chve in sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True):
+# 			eds1=list(eds)
+# 			Gdash1=Gdash.copy()
+# 			CC1=list(CC)
+# 			kk1=k1-1
+# 			eds1.append((ve,chve))
+# 			if ve in list(Gdash1.nodes):
+# 				Gdash1.remove_node(ve)
+# 			if chve in list(Gdash1.nodes):
+# 				Gdash1.remove_node(chve)
+
+# 			if ve in CC1:
+# 				CC1.remove(ve)
+# 			if chve in CC1:
+# 				CC1.remove(chve)
+# 			if kk1>=0 and len(list(Gdash1.edges))==0:
+# 				theds.append(eds1)
+# 				return
+# 			if kk1<0:
+# 				return
+# 			rem_enum(eds1,Gdash1,CC1,kk1)
+		
+
 
 def isU2done(gr,C1,I1,U1,U2,p1):
 	u2graph=gr.subgraph(U2)
@@ -222,7 +241,7 @@ def cliqueChecker(gr,C1,I1,U1,U2,p1):
 def fourCycles(gr,C1,I1,U1,U2,p1):
 	for l in list(nx.cycle_basis(gr)):
 		if len(l)==4:
-			print("4cycle")
+			# print("4cycle")
 			# we have a 4cycle; we have to branch with ab,cd or bc,ad
 			s=gr.subgraph(l)
 			sn=list(s.nodes)
@@ -315,6 +334,7 @@ G=kernelization.kernel()
 k=kernelization.k
 
 # annotated set(must be in V(eds))
+# can be set ar A1 union CC
 A1=kernelization.A1
 
 # max size possible for vc [p<0 => NO instance]
@@ -331,7 +351,7 @@ if len(vertices)==0:
 	exit()
 else:
 	recc(G,C,I,U1,U2,p)
-	if len(theds)==0:
+	if len(theds)==0 or len(min(theds,key=len))>k:
 		print("NO")
 	else:
 		print("YES")

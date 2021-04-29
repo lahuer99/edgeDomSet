@@ -57,20 +57,128 @@ Gcopy.remove_nodes_from([i for i in vertices + CC if i not in vertices or i not 
 toremove=list(nx.maximal_matching(Gcopy))
 print(toremove)
 
+def theenumerator(GG,CC,II,UU):
+	# < need to deal with II>
+	Gdash=G.copy()
+	k1=k
+	eds=[]
+	print(CC)
+	Gcopy=G.copy()
+	Gcopy.remove_nodes_from([i for i in vertices + CC if i not in vertices or i not in CC])
+
+	# print(II)
+	# Gdash.remove_nodes_from(II)
+	# Gcopy.remove_nodes_from(II)
+
+	toremove=list(nx.maximal_matching(Gcopy))
+	UU1=list(UU)
+
+	for u,v in toremove:
+		if u in list(Gdash.nodes):
+			Gdash.remove_node(u)
+		if v in list(Gdash.nodes):
+			Gdash.remove_node(v)
+		if u in CC:
+			CC.remove(u)
+		if v in CC:
+			CC.remove(v)
+
+		k1-=1
+		eds.append((u,v))
+		if k1<=0 and len(list(Gdash.edges))==0:
+			# print(eds)
+			theds.append(eds)
+			return	
+	
+	if k1-len(list(Gdash.edges))>=0:
+		eds.extend(list(Gdash.edges))
+		# print(eds)
+		theds.append(eds)
+		return
 
 
-for u,v in toremove:
-	# Gdash.remove_edges_from(list(G.edges(u)))
-	# Gdash.remove_edges_from(list(G.edges(v)))
-	Gdash.remove_node(u)
-	Gdash.remove_node(v)
+	for ve in CC:
+		k1-=1
 
-print(Gdash.nodes())
+		nlist=sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True)
+		for d,chve in nlist:
+			rem_enum(ve,chve,eds,Gdash,CC)
 
-print(Gdash.edges())
+		# eds.append((ve,chve))
+		# if ve in list(Gdash.nodes):
+		# 	Gdash.remove_node(ve)
+		# if chve in list(Gdash.nodes):
+		# 	Gdash.remove_node(chve)
 
-for ve in CC:
-		# k1-=1
-	print("''''''")
-	print(ve)
-	print(sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True))
+		# if ve in CC:
+		# 	CC.remove(ve)
+		# if chve in CC:
+		# 	CC.remove(chve)
+		# if k1<=0 and len(list(Gdash.edges))==0:
+		# 	theds.append(eds)
+		# 	return	
+
+
+def rem_enum(eds,Gdash,CC,k1):
+	for ve in CC:
+		for d,chve in sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True):
+			eds1=list(eds)
+			Gdash1=Gdash.copy()
+			CC1=list(CC)
+			kk1=k1-1
+			eds1.append((ve,chve))
+			if ve in list(Gdash1.nodes):
+				Gdash1.remove_node(ve)
+			if chve in list(Gdash1.nodes):
+				Gdash1.remove_node(chve)
+
+			if ve in CC1:
+				CC1.remove(ve)
+			if chve in CC1:
+				CC1.remove(chve)
+			if kk1>=0 and len(list(Gdash1.edges))==0:
+				theds.append(eds1)
+				return
+			if kk1<0:
+				return
+			rem_enum(eds1,Gdash1,CC1,kk1)
+
+
+
+
+
+
+
+
+
+
+	
+	if ve in list(Gdash.nodes):
+		Gdash.remove_node(ve)
+	if chve in list(Gdash.nodes):
+		Gdash.remove_node(chve)
+
+	if ve in CC:
+		CC.remove(ve)
+	if chve in CC:
+		CC.remove(chve)
+	if k1<=0 and len(list(Gdash.edges))==0:
+		# print(eds)
+		theds.append(eds)
+
+	print(eds)
+# for u,v in toremove:
+# 	# Gdash.remove_edges_from(list(G.edges(u)))
+# 	# Gdash.remove_edges_from(list(G.edges(v)))
+# 	Gdash.remove_node(u)
+# 	Gdash.remove_node(v)
+
+# print(Gdash.nodes())
+
+# print(Gdash.edges())
+
+# for ve in CC:
+# 		# k1-=1
+# 	print("''''''")
+# 	print(ve)
+# 	print(sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True))
