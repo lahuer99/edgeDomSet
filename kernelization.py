@@ -12,29 +12,55 @@ import networkx as nx
 Gk=nx.Graph()
 
 #parameter[if there is a k-eds?] 
-k=2
+k=3
 
 # adding vertices of graph
 Gk.add_node(0)
 Gk.add_node(1)
 Gk.add_node(2)
 Gk.add_node(3)
-
 Gk.add_node(4)
 Gk.add_node(5)
 Gk.add_node(6)
 Gk.add_node(7)
+# Gk.add_node(8)
+# Gk.add_node(9)
+# Gk.add_node(10)
+# Gk.add_node(11)
+# Gk.add_node(12)
+# Gk.add_node(13)
+# Gk.add_node(14)
+# Gk.add_node(15)
+# Gk.add_node(16)
+
 
 # adding edges of graph
 Gk.add_edge(0,1)
-Gk.add_edge(0,7)
-Gk.add_edge(7,6)
 Gk.add_edge(1,2)
 Gk.add_edge(2,3)
 Gk.add_edge(3,4)
 Gk.add_edge(4,5)
-Gk.add_edge(4,2)
 Gk.add_edge(5,6)
+Gk.add_edge(6,7)
+Gk.add_edge(7,0)
+Gk.add_edge(2,4)
+
+# Gk.add_edge(0,12)
+# Gk.add_edge(12,13)
+# Gk.add_edge(13,2)
+
+# Gk.add_edge(6,15)
+
+# Gk.add_edge(0,14)
+# Gk.add_edge(7,14)
+
+# Gk.add_edge(3,8)
+# Gk.add_edge(8,9)
+# Gk.add_edge(8,10)
+# Gk.add_edge(10,11)
+# Gk.add_edge(9,11)
+# Gk.add_edge(9,16)
+
 
 
 vertices=list(Gk.nodes)
@@ -48,7 +74,7 @@ M=list(nx.maximal_matching(Gk))
 A1=[]
 def kernel():
 	if len(M)<k+1:
-		print("YES")
+		print("YESss")
 		print(M)
 		return nx.empty_graph()
 	else:
@@ -72,7 +98,7 @@ def kernel():
 		to_del=[]
 		for v in v1:
 			if all(x in A1 for x in nx.all_neighbors(Gk,x)):
-				to_del.append(u)
+				to_del.append(v)
 
 		G1.remove_nodes_from(to_del)
 

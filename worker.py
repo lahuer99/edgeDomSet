@@ -26,12 +26,13 @@ def recc(gr,C1,I1,U1,U2,p1):
 		# print(p1)
 		# print("----/////////////////////////////////----")
 	else:
-		# print("YES")
+		print("YES")
+		# exit()
 		theenumerator(gr,C1,I1,U1)
 		# print("---------------")
 	
 def vertexPicker(gr,C1,I1,U1,U2,p1):
-	vl=[x[0] for x in sorted(gr.degree,key=lambda x:x[1],reverse=True) if x[1]>=2]
+	vl=[x[0] for x in sorted(gr.degree,key=lambda x:x[1],reverse=True) if x[1]>=3]
 	if len(vl)==0:
 		return 
 
@@ -59,102 +60,173 @@ def vertexPicker(gr,C1,I1,U1,U2,p1):
 
 
 
-# now have to remove that vertex,its edges and its neighbors from untracked_ and lookinto
-# def cleanup(untracked_vertices,untracked_edges,lookinto,v1,v2):
-# 	nei_v1=list(nx.all_neighbors(G,v1))
-# 	edges_v1=list(G.edges(v1))
-
-# 	nei_v2=list(nx.all_neighbors(G,v2))
-# 	edges_v2=list(G.edges(v2))
-
-# 	new_untrv=[x for x in untracked_vertices if x not in nei_v1 and x not in nei_v2]
-# 	new_untre=[(w1,w2) for w1,w2 in untracked_edges if (w1,w2) not in edges_v1 and (w1,w2) not in edges_v2]
-# 	new_lo=[x for x in lookinto if x not in nei_v1 and x not in nei_v2]
-# 	return new_untrv,new_untre,new_lo
-
-
 def theenumerator(GG,CC,II,UU):
-	# < need to deal with II>
+	notlook=set()
+	if len(CC)==0:
+		return
+
 	Gdash=G.copy()
 	k1=k
 	eds=[]
-	Gcopy=G.copy()
-	Gcopy.remove_nodes_from([i for i in vertices + CC if i not in vertices or i not in CC])
 
-	# print("CC")
+	Gcopy=G.copy()
+	Gcopy.remove_nodes_from([i for i in vertices if i not in CC])
+
 	# print(CC)
-	# Gdash.remove_nodes_from(II)
-	# Gcopy.remove_nodes_from(II)
+	# print(Gcopy.nodes)
 
 	toremove=list(nx.maximal_matching(Gcopy))
 	UU1=list(UU)
+
+	print("------")
+	print(CC)
+	print(eds)
+	print(Gdash.nodes)
+	print("------")
+
 	for u,v in toremove:
 		if u in list(Gdash.nodes):
 			Gdash.remove_node(u)
 		if v in list(Gdash.nodes):
 			Gdash.remove_node(v)
+
 		if u in CC:
 			CC.remove(u)
 		if v in CC:
 			CC.remove(v)
 
+		notlook.add(u)
+		notlook.add(v)
+
 		k1-=1
 		eds.append((u,v))
-		if k1<=0 and len(list(Gdash.edges))==0:
+		if k1>=0 and len(list(Gdash.edges))==0:
 			theds.append(eds)
 			return	
+
+	# if k1-len(list(Gdash.edges))>=0:
+	# 	eds.extend(list(Gdash.edges))
+	# 	theds.append(eds)
+	# 	return
+
+	deg1=set()
+	for v in list(Gdash.nodes):
+		if Gdash.degree(v)<1:
+			deg1.add(v)
 	
-	if k1-len(list(Gdash.edges))>=0:
-		eds.extend(list(Gdash.edges))
-		theds.append(eds)
-		return
-	# rem_enum(eds,Gdash,CC,k1)
+	Gdash.remove_nodes_from(deg1)
+	print(list(Gdash.nodes))
 
 	for ve in CC:
-		k1-=1
+		# chve=ve
+		if ve in notlook:
+			continue
 		chve=sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True)[0][1]
-		eds.append((ve,chve))
+		for i in sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True):
+			if i[1] in list(Gdash.nodes):
+				if i[1] not in notlook:
+					chve=i[1]
+					break
+				elif G.degree(chve)<=G.degree(i[1]):
+					chve=i[1]
+		# if chve==ve:
+			# chve=sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True)[0][1]
+
+
+		k1-=1
+		if (ve,chve) in edges:
+			eds.append((ve,chve))
+		else:
+			eds.append((chve,ve))
+
 		if ve in list(Gdash.nodes):
 			Gdash.remove_node(ve)
 		if chve in list(Gdash.nodes):
 			Gdash.remove_node(chve)
 
-		# if ve in CC:
-		# 	CC.remove(ve)
-		# if chve in CC:
-		# 	CC.remove(chve)
+		notlook.add(ve)
+		notlook.add(chve)
+
+		if ve in CC:
+			CC.remove(ve)
+		if chve in CC:
+			CC.remove(chve)
+
 		if len(list(Gdash.edges))==0:
+			print("++++++++1++++++++++++++")
+			print(eds)
 			theds.append(eds)
 			return	
-		if k1<0:
-			return
+
+	print("------")
+	print(CC)
+	print(eds)
+	print(Gdash.nodes)
+	print(notlook)
+	print("------")
+
+	for i in notlook:
+		if i in CC:
+			CC.remove(i)
+
+	deg1=set()
+	for v in list(Gdash.nodes):
+		if Gdash.degree(v)<1:
+			deg1.add(v)
 	
-	theds.append(list(G.edges))
+	Gdash.remove_nodes_from(deg1)
+	print(list(Gdash.nodes))
 
-# def rem_enum(eds,Gdash,CC,k1):
-# 	for ve in CC:
-# 		for d,chve in sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True):
-# 			eds1=list(eds)
-# 			Gdash1=Gdash.copy()
-# 			CC1=list(CC)
-# 			kk1=k1-1
-# 			eds1.append((ve,chve))
-# 			if ve in list(Gdash1.nodes):
-# 				Gdash1.remove_node(ve)
-# 			if chve in list(Gdash1.nodes):
-# 				Gdash1.remove_node(chve)
+	for ve in list(Gdash.nodes):
+		if ve in notlook:
+			continue
 
-# 			if ve in CC1:
-# 				CC1.remove(ve)
-# 			if chve in CC1:
-# 				CC1.remove(chve)
-# 			if kk1>=0 and len(list(Gdash1.edges))==0:
-# 				theds.append(eds1)
-# 				return
-# 			if kk1<0:
-# 				return
-# 			rem_enum(eds1,Gdash1,CC1,kk1)
-		
+		chve=sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True)[0][1]
+		for i in sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True):
+			if i[1] in list(Gdash.nodes):
+				if i[1] not in notlook:
+					chve=i[1]
+					break
+				elif G.degree(chve)<=G.degree(i[1]):
+					chve=i[1]
+
+		if (ve,chve) in eds or (chve,ve) in eds:
+			continue
+
+		if (ve,chve) in edges:
+			eds.append((ve,chve))
+		else:
+			eds.append((chve,ve))
+		k1-=1
+
+		if ve in list(Gdash.nodes):
+			Gdash.remove_node(ve)
+		if chve in list(Gdash.nodes):
+			Gdash.remove_node(chve)
+
+		notlook.add(ve)
+		notlook.add(chve)
+
+		if ve in CC:
+			CC.remove(ve)
+		if chve in CC:
+			CC.remove(chve)
+
+		if len(list(Gdash.edges))==0:
+			print("+++++++++++2+++++++++++")
+			print(eds)
+			theds.append(eds)
+			return	
+
+
+	print("------")
+	print(CC)
+	print(eds)
+	print(Gdash.nodes)
+	print(notlook)
+	print("------")
+	print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+
 
 
 def isU2done(gr,C1,I1,U1,U2,p1):
@@ -167,7 +239,7 @@ def powerset(iterable,z):
 
 def callOn2paths(gr,C1,I1,U1,U2,p1):
 	# print("2path mode")
-	u2graph=G.subgraph(U2)
+	u2graph=gr.subgraph(U2)
 	P=list(nx.connected_components(u2graph))
 	y=len(P)
 	z=min(p1-y,k-y)
