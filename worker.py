@@ -26,8 +26,18 @@ def recc(gr,C1,I1,U1,U2,p1):
 		# print(p1)
 		# print("----/////////////////////////////////----")
 	else:
-		print("YES")
-		# exit()
+		# print("thibde")
+		# print(C1)
+		# print(U1)
+		# print(len(theds))
+		if len(theds)!=0 and len(min(theds,key=len))<=k:
+			print("YES")
+			print(min(theds,key=len))
+			exit()
+
+		if len(theds)!=0 and len(theds)>=2000:
+			print("NO")
+			exit()
 		theenumerator(gr,C1,I1,U1)
 		# print("---------------")
 	
@@ -72,17 +82,14 @@ def theenumerator(GG,CC,II,UU):
 	Gcopy=G.copy()
 	Gcopy.remove_nodes_from([i for i in vertices if i not in CC])
 
-	# print(CC)
-	# print(Gcopy.nodes)
-
 	toremove=list(nx.maximal_matching(Gcopy))
 	UU1=list(UU)
 
-	print("------")
-	print(CC)
-	print(eds)
-	print(Gdash.nodes)
-	print("------")
+	# print("------")
+	# print(CC)
+	# print(eds)
+	# print(Gdash.nodes)
+	# print("------")
 
 	for u,v in toremove:
 		if u in list(Gdash.nodes):
@@ -115,10 +122,9 @@ def theenumerator(GG,CC,II,UU):
 			deg1.add(v)
 	
 	Gdash.remove_nodes_from(deg1)
-	print(list(Gdash.nodes))
+	# print(list(Gdash.nodes))
 
 	for ve in CC:
-		# chve=ve
 		if ve in notlook:
 			continue
 		chve=sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True)[0][1]
@@ -129,8 +135,6 @@ def theenumerator(GG,CC,II,UU):
 					break
 				elif G.degree(chve)<=G.degree(i[1]):
 					chve=i[1]
-		# if chve==ve:
-			# chve=sorted([(G.degree(x),x) for x in [n for n in G.neighbors(ve)]],key=lambda y:y[0],reverse=True)[0][1]
 
 
 		k1-=1
@@ -153,17 +157,17 @@ def theenumerator(GG,CC,II,UU):
 			CC.remove(chve)
 
 		if len(list(Gdash.edges))==0:
-			print("++++++++1++++++++++++++")
-			print(eds)
+			# print("++++++++1++++++++++++++")
+			# print(eds)
 			theds.append(eds)
 			return	
 
-	print("------")
-	print(CC)
-	print(eds)
-	print(Gdash.nodes)
-	print(notlook)
-	print("------")
+	# print("------")
+	# print(CC)
+	# print(eds)
+	# print(Gdash.nodes)
+	# print(notlook)
+	# print("------")
 
 	for i in notlook:
 		if i in CC:
@@ -175,7 +179,7 @@ def theenumerator(GG,CC,II,UU):
 			deg1.add(v)
 	
 	Gdash.remove_nodes_from(deg1)
-	print(list(Gdash.nodes))
+	# print(list(Gdash.nodes))
 
 	for ve in list(Gdash.nodes):
 		if ve in notlook:
@@ -213,18 +217,18 @@ def theenumerator(GG,CC,II,UU):
 			CC.remove(chve)
 
 		if len(list(Gdash.edges))==0:
-			print("+++++++++++2+++++++++++")
-			print(eds)
+			# print("+++++++++++2+++++++++++")
+			# print(eds)
 			theds.append(eds)
 			return	
 
 
-	print("------")
-	print(CC)
-	print(eds)
-	print(Gdash.nodes)
-	print(notlook)
-	print("------")
+	# print("------")
+	# print(CC)
+	# print(eds)
+	# print(Gdash.nodes)
+	# print(notlook)
+	# print("------")
 	print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
 
 
@@ -244,6 +248,8 @@ def callOn2paths(gr,C1,I1,U1,U2,p1):
 	y=len(P)
 	z=min(p1-y,k-y)
 	Psubs=list(powerset(P,z))
+	# print("Psubs")
+	# print(Psubs)
 	for subs in Psubs:
 		for path2 in subs:
 			C11=list(C1)
@@ -266,7 +272,7 @@ def callOn2paths(gr,C1,I1,U1,U2,p1):
 		for path2 in [x for x in Psubs if x!=subs]:
 			C11=list(C1)
 			U11=list(U1)
-			path2=list(path2)
+			path2=list(path2[0])
 			if u2graph.degree(path2[0])==2:
 				U11.append([path2[1]])
 				U11.append([path2[2]])
