@@ -1,6 +1,9 @@
 # networkx is a Python language software package for the creation, manipulation, and study of the structure, dynamics, and function of complex networks(like graphs!).
 import networkx as nx
 
+# to get graph image(stored as graph.jpg in same dir)
+import matplotlib.pyplot as plt
+
 #to get the powerset 
 from itertools import chain, combinations
 
@@ -26,7 +29,10 @@ def recc(gr,C1,I1,U1,U2,p1):
 		# print(p1)
 		# print("----/////////////////////////////////----")
 	else:
+		# print(p1)
+		# print(isU2done(gr,C1,I1,U1,U2,p1))
 		# print("thibde")
+		# print("'''''''''''''''''''''''''''")
 		# print(C1)
 		# print(U1)
 		# print(len(theds))
@@ -34,9 +40,8 @@ def recc(gr,C1,I1,U1,U2,p1):
 			print("YES")
 			print(min(theds,key=len))
 			exit()
-
-		if len(theds)!=0 and len(theds)>=2000:
-			print("NO")
+		if len(theds)!=0 and len(theds)>=1000:
+			print("NO9")
 			exit()
 		theenumerator(gr,C1,I1,U1)
 		# print("---------------")
@@ -65,6 +70,7 @@ def vertexPicker(gr,C1,I1,U1,U2,p1):
 	p2=p1-len(list(gr.neighbors(ve)))
 	U22=gr.copy()
 	U22.remove_nodes_from(C2)
+	U22.remove_node(ve)
 	U222=list(U22.nodes)
 	recc(U22,C2,I11,U1,U222,p2)
 
@@ -80,7 +86,7 @@ def theenumerator(GG,CC,II,UU):
 	eds=[]
 
 	Gcopy=G.copy()
-	Gcopy.remove_nodes_from([i for i in vertices if i not in CC])
+	Gcopy.remove_nodes_from([i for i in vertices if i not in CC or i in II])
 
 	toremove=list(nx.maximal_matching(Gcopy))
 	UU1=list(UU)
@@ -234,22 +240,29 @@ def theenumerator(GG,CC,II,UU):
 
 
 def isU2done(gr,C1,I1,U1,U2,p1):
-	u2graph=gr.subgraph(U2)
+	u2graph=gr.copy()
+	#old u2graphh=gr.subgraph(U2)
 	return all(len(list(x))==3 for x in list(nx.connected_components(u2graph)))
 
 def powerset(iterable,z):
 	s=list(iterable)
-	return chain.from_iterable(combinations(s,r) for r in range(1,z+1))
+	# old range(1,z+1) -> new range(0,z+1)
+	return chain.from_iterable(combinations(s,r) for r in range(0,z+1))
 
 def callOn2paths(gr,C1,I1,U1,U2,p1):
 	# print("2path mode")
-	u2graph=gr.subgraph(U2)
+	u2graph=gr.copy()
+	#old u2graphh=gr.subgraph(U2)
 	P=list(nx.connected_components(u2graph))
 	y=len(P)
+	# newbegin
+	if y>min(p1,k):
+		# print("mm")
+		return
+	# newend
 	z=min(p1-y,k-y)
 	Psubs=list(powerset(P,z))
-	# print("Psubs")
-	# print(Psubs)
+
 	for subs in Psubs:
 		for path2 in subs:
 			C11=list(C1)
@@ -264,15 +277,25 @@ def callOn2paths(gr,C1,I1,U1,U2,p1):
 			else:
 				C11.extend([path2[0],path2[1]])
 				U11.append([path2[2]])
-			U22=[x for x in U2 if x in C11]
+			#old U22=[x for x in U2 if x not in C11]
+			# newbegin
+			U22=list(U2)
+			U22.remove(path2[0])
+			U22.remove(path2[1])
+			U22.remove(path2[2])
+			# newend
 			p11=p1-2
 			U2new=gr.subgraph(U22)
 			recc(U2new,C11,I1,U11,U22,p11)
+		
 		# move each in P-P', move v1 to C and (v0v2) to U1 
-		for path2 in [x for x in Psubs if x!=subs]:
+		#old for path2 in [x for x in Psubs if x!=subs]:
+		# newbegin
+		for path2 in [x for x in P if x not in subs]:
+		# newend
 			C11=list(C1)
 			U11=list(U1)
-			path2=list(path2[0])
+			path2=list(path2)
 			if u2graph.degree(path2[0])==2:
 				U11.append([path2[1]])
 				U11.append([path2[2]])
@@ -285,8 +308,14 @@ def callOn2paths(gr,C1,I1,U1,U2,p1):
 				U11.append([path2[0]])
 				U11.append([path2[1]])
 				C11.append(path2[2])
+			# U22=list(U2)
+			#lod U22=[x for x in U2 if x in C11]
+			# newbegin
 			U22=list(U2)
-			U22=[x for x in U2 if x in C11]
+			U22.remove(path2[0])
+			U22.remove(path2[1])
+			U22.remove(path2[2])
+			# newend
 			p11=p1-2
 			U2new=gr.subgraph(U22)
 			recc(U2new,C11,I1,U11,U22,p11)			
@@ -294,14 +323,7 @@ def callOn2paths(gr,C1,I1,U1,U2,p1):
 
 
 
-
-
-
 def cliqueChecker(gr,C1,I1,U1,U2,p1):
-	# if(gr==G and not(nx.is_connected(gr))):
-	# 	m=len(list(h.nodes))
-	# 	if gr.size()!=m*(m-1)/2:
-	# 		return
 	for c in list(nx.connected_components(gr)):
 		h=gr.subgraph(c)
 		n=len(list(h.nodes))
@@ -317,40 +339,48 @@ def cliqueChecker(gr,C1,I1,U1,U2,p1):
 
 # now checking for 4-cycles
 def fourCycles(gr,C1,I1,U1,U2,p1):
-	for l in list(nx.cycle_basis(gr)):
-		if len(l)==4:
-			# print("4cycle")
-			# we have a 4cycle; we have to branch with ab,cd or bc,ad
-			s=gr.subgraph(l)
-			sn=list(s.nodes)
+	# for l in list(nx.cycle_basis(gr)):
+	try:
+		# for l in list(nx.find_cycle(gr)):
+		for l in list(nx.cycle_basis(gr)):
+			if len(l)==4:
+				# print("4cycle")
+				# we have a 4cycle; we have to branch with ab,cd or bc,ad
+				s=gr.subgraph(l)
+				sn=list(s.nodes)
 
-			C11=list(C1)
-			C12=list(C1)
+				C11=list(C1)
+				C12=list(C1)
 
-			if sn[0] in list(nx.all_neighbors(s,sn[1])):
-				if sn[0] in list(nx.all_neighbors(s,sn[2])):
-					C11.extend([sn[0],sn[3]])
-					C12.extend([sn[1],sn[2]])
+				if sn[0] in list(nx.all_neighbors(s,sn[1])):
+					if sn[0] in list(nx.all_neighbors(s,sn[2])):
+						C11.extend([sn[0],sn[3]])
+						C12.extend([sn[1],sn[2]])
+					else:
+						C11.extend([sn[0],sn[2]])
+						C12.extend([sn[1],sn[3]])
 				else:
-					C11.extend([sn[0],sn[2]])
-					C12.extend([sn[1],sn[3]])
-			else:
-				C11.extend([sn[0],sn[1]])
-				C12.extend([sn[2],sn[3]])
+					C11.extend([sn[0],sn[1]])
+					C12.extend([sn[2],sn[3]])
 
-			newgr=gr.copy()
-			U11=list(U1)
-			newgr.remove_nodes_from(l)
-			U22=list(newgr.nodes)
-			recc(newgr,C11,I1,U11,U22,p1-2)
+				newgr=gr.copy()
+				U11=list(U1)
+				# old was to  remove from l
+				newgr.remove_nodes_from(C11)
+				U22=list(newgr.nodes)
+				# print(U22)
+				recc(newgr,C11,I1,U11,U22,p1-2)
 
-			# now have to add the other edge set
-			newgr1=gr.copy()
-			U12=list(U1)
-			newgr1.remove_nodes_from(l)
-			U222=list(newgr1.nodes)
-			recc(newgr1,C12,I1,U12,U222,p1-2)			
-
+				# now have to add the other edge set
+				newgr1=gr.copy()
+				U12=list(U1)
+				newgr1.remove_nodes_from(C12)
+				U222=list(newgr1.nodes)
+				# print(U222)
+				recc(newgr1,C12,I1,U12,U222,p1-2)			
+	except:
+		# print("no")
+		return
 
 
 
@@ -376,36 +406,50 @@ def tailIdentifier(gr,C1,I1,U1,U2,p1):
 
 
 def tailBrancher(gr,C1,I1,U1,U2,p1,nbrs,v):
+	others=[]
 	if(gr.degree(nbrs[v][0])==1):
 		vat=nbrs[v][1]
+		others=[v,nbrs[v][0]]
 	else:
 		vat=nbrs[v][0]
+		others=[v,nbrs[v][1]]
 
 	# vat is the deg2 vertex on which we have to further branch:2 cases - either incl vat or n(vat)
 	# so we modify current graph and call recc on that
 	C1d=list(C1)
-	p1d=p1-1
+	p1d=p1-2
 	C1d.append(vat)
 	U12=list(U1)
+	U12.append(others)
 	newG=gr.copy()
-	newG.remove_node(vat)
+	newG.remove_nodes_from([v,nbrs[v][0],nbrs[v][1]])
 	U21=list(newG.nodes)
 	recc(newG,C1d,I1,U12,U21,p1d)
 
 	# branch of neighbors of vat
 	C2d=list(C1)
-	p2d=p1-2
+	p2d=p1-len(list(nx.all_neighbors(gr,vat)))
 	C2d.extend(list(nx.all_neighbors(gr,vat)))
+
 	U12=list(U1)
+	# vat and deg1 vertex become deg0 vertices; vat is added to I, deg0 vertex can be added to U1
+	if(gr.degree(nbrs[v][0])==1):
+		U12.append([nbrs[v][0]])
+		# newG1.remove_node(nbrs[v][0])
+	else:
+		U12.append([nbrs[v][1]])
+		# newG1.remove_node(nbrs[v][1])
 	I11=list(I1)
 	I11.append(vat)
+
 	newG1=gr.copy()
 	newG1.remove_nodes_from(list(nx.all_neighbors(gr,vat)))
+	newG1.remove_nodes_from([v,nbrs[v][0],nbrs[v][1]])
 	U22=list(newG1.nodes)
 	recc(newG1,C2d,I11,U12,U22,p2d)
 
 
-# kernel() in module returns kernel graph; if it is empty, kernelization algo. has already given YES/NO output
+# kernel() in module returns kernel graph; if it is empty, kernelization algo. has already given YES output
 G=kernelization.kernel()
 
 # parameter[if there is a k-eds?] (imported from kernelization module)
@@ -425,10 +469,14 @@ edges=list(G.edges)
 C=I=U1=[]
 U2=vertices
 
+nx.draw(G,with_labels=True)
+plt.savefig("./graph.jpg")
+
 if len(vertices)==0:
 	exit()
 else:
 	recc(G,C,I,U1,U2,p)
+	# print(len(theds))
 	if len(theds)==0 or len(min(theds,key=len))>k:
 		print("NO")
 	else:

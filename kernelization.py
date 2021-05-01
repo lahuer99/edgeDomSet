@@ -12,7 +12,7 @@ import networkx as nx
 Gk=nx.Graph()
 
 #parameter[if there is a k-eds?] 
-k=10
+k=3
 
 # adding vertices of graph
 Gk.add_node(0)
@@ -24,31 +24,32 @@ Gk.add_node(5)
 Gk.add_node(6)
 Gk.add_node(7)
 
-Gk.add_node(8)
-Gk.add_node(9)
-Gk.add_node(10)
-Gk.add_node(11)
-Gk.add_node(12)
-Gk.add_node(13)
-Gk.add_node(14)
-Gk.add_node(15)
-Gk.add_node(16)
+# Gk.add_node(8)
+# Gk.add_node(9)
+# Gk.add_node(10)
+# Gk.add_node(11)
+# Gk.add_node(12)
+# Gk.add_node(13)
+# Gk.add_node(14)
+# Gk.add_node(15)
+# Gk.add_node(16)
 
 
-Gk.add_node(17)
-Gk.add_node(18)
-Gk.add_node(19)
-Gk.add_node(20)
+# Gk.add_node(17)
+# Gk.add_node(18)
+# Gk.add_node(19)
+# Gk.add_node(20)
 
-Gk.add_node(21)
-Gk.add_node(22)
-Gk.add_node(23)
-Gk.add_node(24)
+# Gk.add_node(21)
+# Gk.add_node(22)
+# Gk.add_node(23)
+# Gk.add_node(24)
 
-Gk.add_node(25)
-Gk.add_node(26)
+# Gk.add_node(25)
+# Gk.add_node(26)
 
-Gk.add_node(27)
+# Gk.add_node(27)
+
 # Gk.add_node(28)
 # Gk.add_node(29)
 
@@ -66,37 +67,52 @@ Gk.add_edge(6,7)
 Gk.add_edge(7,0)
 Gk.add_edge(2,4)
 
-Gk.add_edge(0,12)
-Gk.add_edge(12,13)
-Gk.add_edge(13,2)
-
-Gk.add_edge(6,15)
-
-Gk.add_edge(0,14)
-Gk.add_edge(7,14)
-
-Gk.add_edge(3,8)
-Gk.add_edge(8,9)
-Gk.add_edge(9,11)
-Gk.add_edge(10,11)
-Gk.add_edge(9,16)
-Gk.add_edge(8,10)
-
-Gk.add_edge(17,18)
-Gk.add_edge(18,19)
-Gk.add_edge(19,20)
-Gk.add_edge(20,17)
 
 
-Gk.add_edge(21,22)
-Gk.add_edge(22,23)
-Gk.add_edge(22,24)
 
-Gk.add_edge(25,26)
-Gk.add_edge(26,27)
 
-# Gk.add_edge(28,29)
+# Gk.add_edge(8,9)
+# Gk.add_edge(9,10)
+# Gk.add_edge(10,11)
+# Gk.add_edge(11,8)
+
+
+
+
+
+# Gk.add_edge(0,12)
+# Gk.add_edge(12,13)
+# Gk.add_edge(13,2)
+
+# Gk.add_edge(6,15)
+
+# Gk.add_edge(0,14)
+# Gk.add_edge(7,14)
+
+# Gk.add_edge(3,8)
+# Gk.add_edge(8,9)
+# Gk.add_edge(9,11)
+# Gk.add_edge(10,11)
+# Gk.add_edge(9,16)
+# Gk.add_edge(8,10)
+
+# Gk.add_edge(17,18)
+# Gk.add_edge(18,19)
+# Gk.add_edge(19,20)
+# Gk.add_edge(20,17)
+
+
+# Gk.add_edge(21,22)
+# Gk.add_edge(22,23)
+# Gk.add_edge(22,24)
+
+# Gk.add_edge(24,25)
+# Gk.add_edge(24,26)
+# Gk.add_edge(23,27)
 # Gk.add_edge(23,28)
+
+# Gk.add_edge(29,30)
+
 
 
 vertices=list(Gk.nodes)
