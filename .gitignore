@@ -1,9 +1,6 @@
 mehh/
-*.pdf
-*.png
+assets/
 __pycache__/
 lookinto/
-a.out
-ToDo
 mainn/
-*.pdf
+tester.py

@@ -1,0 +1,5 @@
+-> improve on kernelization.py; not fully efficient(works fine). main.py can execute without kernelization.py right now.
+
+-> check the issue with NO instance(keeps running on and on); right now, if the number of vertex covers becomes >1000, we assume it to be a NO instance.
+
+-> bring in OOPS ( state tuple as a class)

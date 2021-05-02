@@ -1,7 +1,7 @@
 # networkx is a Python language software package for the creation, manipulation, and study of the structure, dynamics, and function of complex networks(like graphs!).
 import networkx as nx
 
-# to get graph image(stored as graph.jpg in same dir)
+# to get graph image(stored in same dir)
 import matplotlib.pyplot as plt
 
 #to get the powerset 
@@ -16,7 +16,6 @@ theds=[]
 def recc(gr,C1,I1,U1,U2,p1):
 	if p1>=0 and len(U2)!=0:
 		if isU2done(gr,C1,I1,U1,U2,p1):
-			# print("callon2paths")
 			callOn2paths(gr,C1,I1,U1,U2,p1)
 		else:
 			cliqueChecker(gr,C1,I1,U1,U2,p1)
@@ -26,25 +25,28 @@ def recc(gr,C1,I1,U1,U2,p1):
 			
 	elif p1<0:
 		p1=p1
-		# print(p1)
-		# print("----/////////////////////////////////----")
 	else:
-		# print(p1)
-		# print(isU2done(gr,C1,I1,U1,U2,p1))
-		# print("thibde")
-		# print("'''''''''''''''''''''''''''")
-		# print(C1)
-		# print(U1)
-		# print(len(theds))
 		if len(theds)!=0 and len(min(theds,key=len))<=k:
 			print("YES")
 			print(min(theds,key=len))
+
+			eddss=min(theds,key=len)
+			pos = nx.spring_layout(G)
+			values=['r' if tu in eddss or tu[::-1] in eddss else '#000000' for tu in edges ]
+			weights=[5 if tu in eddss or tu[::-1] in eddss else 1 for tu in edges ]
+			nx.draw(G,pos,edge_color=values,width=weights,with_labels=True)
+			plt.savefig("./edsgraph.jpg")
+
 			exit()
+
+		# ToDo
+		# for a NO instance, program runs for a long-time(have to figure out why)
+		# for now, if we get past 1000 vc, we assume it to be a NO instance
 		if len(theds)!=0 and len(theds)>=1000:
-			print("NO9")
+			print("NO")
 			exit()
 		theenumerator(gr,C1,I1,U1)
-		# print("---------------")
+
 	
 def vertexPicker(gr,C1,I1,U1,U2,p1):
 	vl=[x[0] for x in sorted(gr.degree,key=lambda x:x[1],reverse=True) if x[1]>=3]
@@ -61,7 +63,6 @@ def vertexPicker(gr,C1,I1,U1,U2,p1):
 	U212=list(U21.nodes)
 	recc(U21,C11,I1,U1,U212,p11)
 
-	# print("////////////////////////////////")
 	
 	C2=list(C1)
 	C2.extend(list(gr.neighbors(ve)))
@@ -91,12 +92,6 @@ def theenumerator(GG,CC,II,UU):
 	toremove=list(nx.maximal_matching(Gcopy))
 	UU1=list(UU)
 
-	# print("------")
-	# print(CC)
-	# print(eds)
-	# print(Gdash.nodes)
-	# print("------")
-
 	for u,v in toremove:
 		if u in list(Gdash.nodes):
 			Gdash.remove_node(u)
@@ -117,10 +112,10 @@ def theenumerator(GG,CC,II,UU):
 			theds.append(eds)
 			return	
 
-	# if k1-len(list(Gdash.edges))>=0:
-	# 	eds.extend(list(Gdash.edges))
-	# 	theds.append(eds)
-	# 	return
+	if k1-len(list(Gdash.edges))>=0:
+		eds.extend(list(Gdash.edges))
+		theds.append(eds)
+		return
 
 	deg1=set()
 	for v in list(Gdash.nodes):
@@ -128,7 +123,6 @@ def theenumerator(GG,CC,II,UU):
 			deg1.add(v)
 	
 	Gdash.remove_nodes_from(deg1)
-	# print(list(Gdash.nodes))
 
 	for ve in CC:
 		if ve in notlook:
@@ -163,17 +157,8 @@ def theenumerator(GG,CC,II,UU):
 			CC.remove(chve)
 
 		if len(list(Gdash.edges))==0:
-			# print("++++++++1++++++++++++++")
-			# print(eds)
 			theds.append(eds)
 			return	
-
-	# print("------")
-	# print(CC)
-	# print(eds)
-	# print(Gdash.nodes)
-	# print(notlook)
-	# print("------")
 
 	for i in notlook:
 		if i in CC:
@@ -185,7 +170,6 @@ def theenumerator(GG,CC,II,UU):
 			deg1.add(v)
 	
 	Gdash.remove_nodes_from(deg1)
-	# print(list(Gdash.nodes))
 
 	for ve in list(Gdash.nodes):
 		if ve in notlook:
@@ -223,19 +207,8 @@ def theenumerator(GG,CC,II,UU):
 			CC.remove(chve)
 
 		if len(list(Gdash.edges))==0:
-			# print("+++++++++++2+++++++++++")
-			# print(eds)
 			theds.append(eds)
 			return	
-
-
-	# print("------")
-	# print(CC)
-	# print(eds)
-	# print(Gdash.nodes)
-	# print(notlook)
-	# print("------")
-	print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
 
 
 
@@ -246,20 +219,16 @@ def isU2done(gr,C1,I1,U1,U2,p1):
 
 def powerset(iterable,z):
 	s=list(iterable)
-	# old range(1,z+1) -> new range(0,z+1)
 	return chain.from_iterable(combinations(s,r) for r in range(0,z+1))
 
 def callOn2paths(gr,C1,I1,U1,U2,p1):
-	# print("2path mode")
 	u2graph=gr.copy()
 	#old u2graphh=gr.subgraph(U2)
 	P=list(nx.connected_components(u2graph))
 	y=len(P)
-	# newbegin
 	if y>min(p1,k):
 		# print("mm")
 		return
-	# newend
 	z=min(p1-y,k-y)
 	Psubs=list(powerset(P,z))
 
@@ -277,13 +246,11 @@ def callOn2paths(gr,C1,I1,U1,U2,p1):
 			else:
 				C11.extend([path2[0],path2[1]])
 				U11.append([path2[2]])
-			#old U22=[x for x in U2 if x not in C11]
-			# newbegin
+
 			U22=list(U2)
 			U22.remove(path2[0])
 			U22.remove(path2[1])
 			U22.remove(path2[2])
-			# newend
 			p11=p1-2
 			U2new=gr.subgraph(U22)
 			recc(U2new,C11,I1,U11,U22,p11)
@@ -292,7 +259,6 @@ def callOn2paths(gr,C1,I1,U1,U2,p1):
 		#old for path2 in [x for x in Psubs if x!=subs]:
 		# newbegin
 		for path2 in [x for x in P if x not in subs]:
-		# newend
 			C11=list(C1)
 			U11=list(U1)
 			path2=list(path2)
@@ -308,14 +274,11 @@ def callOn2paths(gr,C1,I1,U1,U2,p1):
 				U11.append([path2[0]])
 				U11.append([path2[1]])
 				C11.append(path2[2])
-			# U22=list(U2)
-			#lod U22=[x for x in U2 if x in C11]
-			# newbegin
+	
 			U22=list(U2)
 			U22.remove(path2[0])
 			U22.remove(path2[1])
 			U22.remove(path2[2])
-			# newend
 			p11=p1-2
 			U2new=gr.subgraph(U22)
 			recc(U2new,C11,I1,U11,U22,p11)			
@@ -339,12 +302,10 @@ def cliqueChecker(gr,C1,I1,U1,U2,p1):
 
 # now checking for 4-cycles
 def fourCycles(gr,C1,I1,U1,U2,p1):
-	# for l in list(nx.cycle_basis(gr)):
 	try:
 		# for l in list(nx.find_cycle(gr)):
 		for l in list(nx.cycle_basis(gr)):
 			if len(l)==4:
-				# print("4cycle")
 				# we have a 4cycle; we have to branch with ab,cd or bc,ad
 				s=gr.subgraph(l)
 				sn=list(s.nodes)
@@ -365,10 +326,9 @@ def fourCycles(gr,C1,I1,U1,U2,p1):
 
 				newgr=gr.copy()
 				U11=list(U1)
-				# old was to  remove from l
+				# old was to remove from l
 				newgr.remove_nodes_from(C11)
 				U22=list(newgr.nodes)
-				# print(U22)
 				recc(newgr,C11,I1,U11,U22,p1-2)
 
 				# now have to add the other edge set
@@ -376,10 +336,8 @@ def fourCycles(gr,C1,I1,U1,U2,p1):
 				U12=list(U1)
 				newgr1.remove_nodes_from(C12)
 				U222=list(newgr1.nodes)
-				# print(U222)
 				recc(newgr1,C12,I1,U12,U222,p1-2)			
 	except:
-		# print("no")
 		return
 
 
@@ -435,10 +393,8 @@ def tailBrancher(gr,C1,I1,U1,U2,p1,nbrs,v):
 	# vat and deg1 vertex become deg0 vertices; vat is added to I, deg0 vertex can be added to U1
 	if(gr.degree(nbrs[v][0])==1):
 		U12.append([nbrs[v][0]])
-		# newG1.remove_node(nbrs[v][0])
 	else:
 		U12.append([nbrs[v][1]])
-		# newG1.remove_node(nbrs[v][1])
 	I11=list(I1)
 	I11.append(vat)
 
@@ -455,8 +411,9 @@ G=kernelization.kernel()
 # parameter[if there is a k-eds?] (imported from kernelization module)
 k=kernelization.k
 
+# ToDo
 # annotated set(must be in V(eds))
-# can be set ar A1 union CC
+# can be set as A1 union CC
 A1=kernelization.A1
 
 # max size possible for vc [p<0 => NO instance]
@@ -465,20 +422,29 @@ p=2*k
 vertices=list(G.nodes)
 edges=list(G.edges)
 
-# check starting branching with each vertex recursively
+# the state tuple 
 C=I=U1=[]
 U2=vertices
 
-nx.draw(G,with_labels=True)
-plt.savefig("./graph.jpg")
 
 if len(vertices)==0:
 	exit()
 else:
+	pos = nx.spring_layout(G)
+	nx.draw(G,pos,with_labels=True)
+	plt.savefig("./graph.jpg")
+	plt.clf()
+
 	recc(G,C,I,U1,U2,p)
-	# print(len(theds))
+
 	if len(theds)==0 or len(min(theds,key=len))>k:
 		print("NO")
 	else:
 		print("YES")
 		print(min(theds,key=len))
+		eddss=min(theds,key=len)
+		pos = nx.spring_layout(G)
+		values=['r' if tu in eddss or tu[::-1] in eddss else '#000000' for tu in edges ]
+		weights=[5 if tu in eddss or tu[::-1] in eddss else 1 for tu in edges ]
+		nx.draw(G,pos,edge_color=values,width=weights,with_labels=True)
+		plt.savefig("./edsgraph.jpg")

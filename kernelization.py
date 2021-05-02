@@ -1,6 +1,9 @@
 # networkx is a Python language software package for the creation, manipulation, and study of the structure, dynamics, and function of complex networks(like graphs!).
 import networkx as nx
 
+# to get graph image(stored as graph.jpg in same dir)
+import matplotlib.pyplot as plt
+
 # to perform kernelization on input instance <G,k> and return the new instance set <G',k'>
 
 # a linear-time kernel
@@ -68,16 +71,10 @@ Gk.add_edge(7,0)
 Gk.add_edge(2,4)
 
 
-
-
-
 # Gk.add_edge(8,9)
 # Gk.add_edge(9,10)
 # Gk.add_edge(10,11)
 # Gk.add_edge(11,8)
-
-
-
 
 
 # Gk.add_edge(0,12)
@@ -114,7 +111,6 @@ Gk.add_edge(2,4)
 # Gk.add_edge(29,30)
 
 
-
 vertices=list(Gk.nodes)
 edges=list(Gk.edges)
 
@@ -126,7 +122,19 @@ M=list(nx.maximal_matching(Gk))
 A1=[]
 def kernel():
 	if len(M)<k+1:
-		print("YESs")
+		pos = nx.spring_layout(Gk)
+		nx.draw(Gk,pos,with_labels=True)
+		plt.savefig("./graph.jpg")
+		
+		plt.clf()
+
+		pos = nx.spring_layout(Gk)
+		values=['r' if tu in M or tu[::-1] in M else '#000000' for tu in edges ]
+		weights=[5 if tu in M or tu[::-1] in M else 1 for tu in edges ]
+		nx.draw(Gk,pos,edge_color=values,width=weights,with_labels=True)
+		plt.savefig("./edsgraph.jpg")
+
+		print("YES")
 		print(M)
 		return nx.empty_graph()
 	else:
